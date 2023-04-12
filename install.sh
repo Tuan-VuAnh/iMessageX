@@ -7,8 +7,8 @@ else
     echo "Homebrew is already installed"
 fi
 
-brew install python
-brew install python-tk
+brew install python@3.10
+brew install python-tk@3.10
 
 rm -rf /Applications/iMessageX.app
 
