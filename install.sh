@@ -10,6 +10,8 @@ fi
 brew install python
 brew install python-tk
 
+rm -rf /Applications/iMessageX.app
+
 mkdir -p /tmp/.imessagex
 cd /tmp/.imessagex
 git clone https://github.com/Tuan-VuAnh/iMessageX.git
