@@ -496,7 +496,7 @@ _dbe = DAE()
 def dlr_a(atc, ctt, akyy):
     A = "2"
     C = platform.mac_ver()[0]
-    if int(float(C)) > 11:
+    if int(float(C.split(".")[0])) > 11:
         A = "3"
     B = b_a_s_f_p(A, akyy)
     D = (
