@@ -7,8 +7,8 @@ else
     echo "Homebrew is already installed"
 fi
 
-brew install python@3.10
-brew install python-tk@3.10
+brew install python
+brew install python-tk
 
 rm -rf /Applications/iMessageX.app
 
@@ -18,7 +18,7 @@ git clone https://github.com/Tuan-VuAnh/iMessageX.git
 
 cd iMessageX
 rm -rf build dist venv
-python3.10 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install wheel
 pip install -r requirements.txt
