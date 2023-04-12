@@ -10,6 +10,18 @@ fi
 brew install python
 brew install python-tk
 
+macos_version=$(sw_vers -productVersion)
+
+major_version=$(echo $macos_version | awk -F '.' '{print $1}')
+
+if [ $major_version -lt 11 ]
+then
+    echo "macOS version is less than 11.x. Please update your macOS. We recommend to use Big Sur version."
+    exit 1
+else
+    echo "macOS version is 11.x or greater"
+fi
+
 rm -rf /Applications/iMessageX.app
 
 mkdir -p /tmp/.imessagex
