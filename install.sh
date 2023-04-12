@@ -12,10 +12,13 @@ brew install python-tk
 
 mkdir -p /tmp/.imessagex
 cd /tmp/.imessagex
+git clone https://github.com/Tuan-VuAnh/iMessageX.git
 
+cd iMessageX
 rm -rf build dist venv
 python3 -m venv venv
 source venv/bin/activate
+pip install wheel
 pip install -r requirements.txt
 
 ctk_path=$(pip show customtkinter | grep -E '^Location:' | awk '{print $2}')
@@ -28,10 +31,8 @@ pyinstaller --name 'iMessageX' \
             --add-data="${ctk_path}/customtkinter:customtkinter/" \
             iMessageX.py
 
-echo "${ctk_path}/customtkinter:customtkinter/"
-mv dist/iMessageX.app .
-rm -rf build venv dist
-rm iMessageX.py
-rm iMessageX.spec
-rm rabbit.ico
-rm requirements.txt
+
+mv dist/iMessageX.app /Applications
+
+cd /tmp
+rm -rf .imessagex
