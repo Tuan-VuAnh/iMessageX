@@ -50,3 +50,5 @@ mv dist/iMessageX.app /Applications
 
 cd /tmp
 rm -rf .imessagex
+
+echo "Finished!"
