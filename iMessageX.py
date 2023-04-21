@@ -21,8 +21,8 @@ vn_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
 
 
 class IMessageXAPI:
-    # DOMAIN_NAME = "https://imessagex.bunnydream.site"
-    DOMAIN_NAME = "http://127.0.0.1:8000"
+    DOMAIN_NAME = "https://imessagex.bunnydream.site"
+    # DOMAIN_NAME = "http://127.0.0.1:8000"
     headers = {"Accept": "application/json"}
 
     def get_and_save_scripts(self, data: dict):
@@ -450,7 +450,7 @@ class App(customtkinter.CTk):
         self.home_frame_tag_input.grid(
             row=0, column=1, padx=20, pady=(10, 0), sticky="ew"
         )
-        self.home_frame_tag_input.insert(0, "Unknown")
+        self.home_frame_tag_input.insert(0, "")
 
         self.home_frame_textbox = customtkinter.CTkTextbox(self.home_frame)
         self.home_frame_textbox.grid(row=1, columnspan=2, padx=20, pady=10, sticky="ew")
