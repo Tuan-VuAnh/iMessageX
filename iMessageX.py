@@ -1,1518 +1,1230 @@
-_AA = (
-    """wsjCt"""
-    + """TxqX*W"""
-    + """SL:`mv-PXV'I"""
-    + """N/oCf|PH;"""
-    + """wOch\Ggx<Tovl"""
-    + """NiS>WEZ.{gr"""
-    + """eFzd"""
-    + """yyp#uep"""
-    + """K$faqU=U"O~DtYZ@m"""
-    + """nBYbKA)VJIksl"""
-    + """BRu"""
-    + """D[GM"""
-    + """rR+LA?Mi,_}"""
-    + """(dQHkj]^F&b!aEJ"""
-)
-_c = "all_imessage"
-_b = "all_sent"
-_a = "month_imessage"
-_Z = "month_sent"
-_Y = "today_imessage"
-_X = "today_sent"
-_W = "Checking..."
-_V = "message"
-_U = "get_imessage_numbers_frame"
-_T = "license_frame"
-_S = "stats_frame"
-_R = "telegram"
-_Q = "license_key"
-_P = ".com"
-_O = "home"
-_N = "1.0"
-_NN = """hnczQ%9"""
-_M = "disabled"
-_L = "Edit"
-_K = "nsew"
-_J = "\n"
-_I = "serial_number"
-_H = "-"
-_G = "normal"
-_F = "readonly"
-_E = False
-_D = True
-_C = "transparent"
-_B = "w"
-_BB = """604518723"""
-_A = "ew"
-import customtkinter, os, base64, requests, subprocess, threading, sys, sqlite3, platform
+import customtkinter
+import pytz
+import json
+import os
+import base64
+import requests
+import subprocess
+import threading
+import sys
+import sqlite3
+import platform
+
 from datetime import datetime, date, timedelta
 from time import sleep
 from getpass import getuser
 from pathlib import Path
+
 from Crypto.Cipher import AES
 
+vn_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
 
-class I_A:
-    D_N = (
-        _AA[35]
-        + _AA[4]
-        + _AA[4]
-        + _AA[62]
-        + _AA[1]
-        + _AA[13]
-        + _AA[24]
-        + _AA[24]
-        + _AA[46]
-        + _AA[15]
-        + _AA[56]
-        + _AA[1]
-        + _AA[1]
-        + _AA[70]
-        + _AA[38]
-        + _AA[56]
-        + _AA[6]
-        + _AA[52]
-        + _AA[87]
-        + _AA[64]
-        + _AA[84]
-        + _AA[84]
-        + _AA[60]
-        + _AA[59]
-        + _AA[55]
-        + _AA[56]
-        + _AA[70]
-        + _AA[15]
-        + _AA[52]
-        + _AA[1]
-        + _AA[46]
-        + _AA[4]
-        + _AA[56]
-    )
-    hdrs_es = {
-        _AA[89]
-        + _AA[34]
-        + _AA[34]
-        + _AA[56]
-        + _AA[62]
-        + _AA[4]: _AA[70]
-        + _AA[62]
-        + _AA[62]
-        + _AA[44]
-        + _AA[46]
-        + _AA[34]
-        + _AA[70]
-        + _AA[4]
-        + _AA[46]
-        + _AA[25]
-        + _AA[84]
-        + _AA[24]
-        + _AA[2]
-        + _AA[1]
-        + _AA[25]
-        + _AA[84]
-    }
 
-    def g_a_s_s(A, data):
-        F = (
-            f"{A.D_N}"
-            + _AA[24]
-            + _AA[70]
-            + _AA[62]
-            + _AA[46]
-            + _AA[24]
-            + _AA[38]
-            + _AA[56]
-            + _AA[4]
-            + _AA[24]
-        )
-        B = requests.post(F, headers=A.hdrs_es, json=data)
-        if B.status_code == 200:
-            C = os.path.join(CDFG.APPF, _P)
-            Path(C).mkdir(parents=_D, exist_ok=_D)
-            G = B.json()
-            for D in ["1", "2", "3"]:
-                H = G.get(D)
-                E = os.path.join(C, f"{D}")
-                if not Path(E).is_file():
-                    with open(E, _B) as I:
-                        I.write(H)
+class IMessageXAPI:
+    # DOMAIN_NAME = "https://imessagex.bunnydream.site"
+    DOMAIN_NAME = "http://127.0.0.1:8000"
+    headers = {"Accept": "application/json"}
 
-    def g_a_k_a_v_s(A, ll_kk):
-        B = "0"
-        C = CDFG.SRVERRT
+    def get_and_save_scripts(self, data: dict):
+        url = f"{self.DOMAIN_NAME}/api/get/"
+        response = requests.post(url, headers=self.headers, json=data)
+        if response.status_code == 200:
+            folder = os.path.join(CONFIG.APP_FOLDER, ".com")
+            Path(folder).mkdir(parents=True, exist_ok=True)
+            json_response = response.json()
+            for key in ["1", "2", "3"]:
+                value = json_response.get(key)
+                fpath = os.path.join(folder, f"{key}")
+                if not Path(fpath).is_file():
+                    with open(fpath, "w") as f:
+                        f.write(value)
+
+    def get_aes_key_and_validation_string(self, license_key: str) -> str:
+        aes_key = "0"
+        message = CONFIG.SERVER_ERROR_TEXT
         try:
-            G = (
-                f"{A.D_N}"
-                + _AA[24]
-                + _AA[70]
-                + _AA[62]
-                + _AA[46]
-                + _AA[24]
-                + _AA[34]
-                + _AA[35]
-                + _AA[56]
-                + _AA[34]
-                + _AA[94]
-                + _AA[24]
-            )
-            D = {_Q: ll_kk, _I: hlpr.gg_ss_nn()}
-            E = requests.post(G, headers=A.hdrs_es, json=D)
-            F = E.json()
-            C = F.get(_V)
-            if E.status_code == 200:
-                A.g_a_s_s(D)
-                B = F.get(_AA[59] + _AA[70] + _AA[4] + _AA[70])
+            url = f"{self.DOMAIN_NAME}/api/check/"
+            data = {
+                "license_key": license_key,
+                "serial_number": helper.get_serial_number(),
+            }
+
+            response = requests.post(url, headers=self.headers, json=data)
+
+            response_json = response.json()
+            message = response_json.get("message")
+
+            if response.status_code == 200:
+                self.get_and_save_scripts(data)
+                aes_key = response_json.get("data")
             else:
-                B = "1"
+                aes_key = "1"
+
         except:
             pass
-        return [B, C]
 
-    def g_p_s(B, ll_kk=""):
-        C = {}
+        return [aes_key, message]
+
+    def get_phone_statistics(self, license_key: str = ""):
+        res = {}
         try:
-            D = (
-                f"{B.D_N}"
-                + _AA[24]
-                + _AA[70]
-                + _AA[62]
-                + _AA[46]
-                + _AA[24]
-                + _AA[1]
-                + _AA[4]
-                + _AA[70]
-                + _AA[4]
-                + _AA[1]
-                + _AA[24]
-            )
-            E = {_I: hlpr.gg_ss_nn()}
-            A = requests.post(D, headers=B.hdrs_es, json=E)
-            if A.status_code == 200:
-                C = A.json()
+            url = f"{self.DOMAIN_NAME}/api/stats/"
+            data = {
+                "serial_number": helper.get_serial_number(),
+            }
+            response = requests.post(url, headers=self.headers, json=data)
+            if response.status_code == 200:
+                res = response.json()
+
             try:
-                D = (
-                    f"{B.D_N}"
-                    + _AA[24]
-                    + _AA[70]
-                    + _AA[62]
-                    + _AA[46]
-                    + _AA[24]
-                    + _AA[16]
-                    + _AA[46]
-                    + _AA[62]
-                    + _AA[17]
-                    + _AA[1]
-                    + _AA[4]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[1]
-                    + _AA[24]
-                )
-                E[_Q] = ll_kk
-                A = requests.post(D, headers=B.hdrs_es, json=E)
-                if A.status_code == 200:
-                    C[_AA[16] + _AA[46] + _AA[62]] = A.json()
+                url = f"{self.DOMAIN_NAME}/api/vip-stats/"
+                data["license_key"] = license_key
+                response = requests.post(url, headers=self.headers, json=data)
+                if response.status_code == 200:
+                    res["vip"] = response.json()
             except:
                 pass
         except:
             pass
-        return C
 
-    def u_n_s(A, srln, dte, st):
-        B = (
-            f"{A.D_N}"
-            + _AA[24]
-            + _AA[70]
-            + _AA[62]
-            + _AA[46]
-            + _AA[24]
-            + _AA[84]
-            + _AA[25]
-            + _AA[59]
-            + _AA[56]
-            + _AA[24]
-        )
-        C = {
-            _I: srln,
-            _AA[59] + _AA[70] + _AA[4] + _AA[56]: dte,
-            _AA[1] + _AA[56] + _AA[84] + _AA[4]: st,
+        return res
+
+    def update_node_sent(self, serial_number, date, sent, tag):
+        url = f"{self.DOMAIN_NAME}/api/node/"
+        data = {
+            "serial_number": serial_number,
+            "date": date,
+            "sent": sent,
+            "tag": tag,
         }
-        D = requests.post(B, headers=A.hdrs_es, json=C)
+        response = requests.post(url, headers=self.headers, json=data)
 
-    def p_p(A, nbb, ate, snbr_al):
-        B = (
-            f"{A.D_N}"
-            + _AA[24]
-            + _AA[70]
-            + _AA[62]
-            + _AA[46]
-            + _AA[24]
-            + _AA[62]
-            + _AA[35]
-            + _AA[25]
-            + _AA[84]
-            + _AA[56]
-            + _AA[24]
-        )
-        C = {
-            _AA[84] + _AA[64] + _AA[15] + _AA[87] + _AA[56] + _AA[55]: nbb,
-            _AA[59] + _AA[70] + _AA[4] + _AA[56]: ate,
-            _I: snbr_al,
+    def post_phone(self, number, date, serial_number, tag, is_read: bool = False):
+        url = f"{self.DOMAIN_NAME}/api/phone/"
+        data = {
+            "number": number,
+            "date": date,
+            "serial_number": serial_number,
+            "tag": tag,
+            "is_read": is_read,
         }
-        D = requests.post(B, headers=A.hdrs_es, json=C)
+        response = requests.post(url, headers=self.headers, json=data)
 
-    def g_f_b_s(A, license_key, serial_number, user_id, is_getting_vip=_E):
-        B = f"{A.D_N}/api/file/"
+    def get_file_by_serial(
+        self, license_key, serial_number, user_id, is_getting_vip: bool = False
+    ):
+        url = f"{self.DOMAIN_NAME}/api/file/"
         if is_getting_vip:
-            B = f"{A.D_N}/api/vip-file/"
-        C = {_Q: license_key, _I: serial_number, "user_id": user_id}
-        D = requests.post(B, headers=A.hdrs_es, json=C)
-        return D.json().get(_V)
+            url = f"{self.DOMAIN_NAME}/api/vip-file/"
+        data = {
+            "license_key": license_key,
+            "serial_number": serial_number,
+            "user_id": user_id,
+        }
+        response = requests.post(url, headers=self.headers, json=data)
+
+        return response.json().get("message")
 
 
-i_A = I_A()
-_AA += _NN
+iMessageXAPI = IMessageXAPI()
 
-class CDfg:
-    APPF = (
-        _AA[24]
-        + _AA[72]
-        + _AA[1]
-        + _AA[56]
-        + _AA[55]
-        + _AA[1]
-        + _AA[24]
-        + f"{getuser()}"
-        + _AA[24]
-        + _AA[52]
-        + _AA[46]
-        + _AA[15]
-        + _AA[56]
-        + _AA[1]
-        + _AA[1]
-        + _AA[70]
-        + _AA[38]
-        + _AA[56]
-        + _AA[6]
+
+class Config:
+    APP_FOLDER = f"/Users/{getuser()}/.imessagex"
+    Path(APP_FOLDER).mkdir(parents=True, exist_ok=True)
+
+    APP_JSON_FOLDER = os.path.join(APP_FOLDER, "json")
+    Path(APP_JSON_FOLDER).mkdir(parents=True, exist_ok=True)
+
+    PHONE_PREFIX = "+84"
+
+    DATABASE_NAME = f"{APP_FOLDER}/imessagex.db"
+    # DATABASE_NAME = f"/Users/{getuser()}/Library/Messages/imessagex.db"
+
+    LICENSE_TABLE = "license"
+
+    INSERT = {
+        LICENSE_TABLE: ["key"],
+    }
+
+    LICENSE_INVALID_TEXT = "License is invalid!"
+    SERVER_ERROR_TEXT = (
+        "Can not connect to the server. Please contact the administrators."
     )
-    Path(APPF).mkdir(parents=_D, exist_ok=_D)
-    DTBN = (
-        f"{APPF}"
-        + _AA[24]
-        + _AA[46]
-        + _AA[15]
-        + _AA[56]
-        + _AA[1]
-        + _AA[1]
-        + _AA[70]
-        + _AA[38]
-        + _AA[56]
-        + _AA[6]
-        + _AA[52]
-        + _AA[59]
-        + _AA[87]
-    )
-    LCST = _AA[44] + _AA[46] + _AA[34] + _AA[56] + _AA[84] + _AA[1] + _AA[56]
-    IST = {LCST: ["key"]}
-    LCSIT = (
-        _AA[12]
-        + _AA[46]
-        + _AA[34]
-        + _AA[56]
-        + _AA[84]
-        + _AA[1]
-        + _AA[56]
-        + " "
-        + _AA[46]
-        + _AA[1]
-        + " "
-        + _AA[46]
-        + _AA[84]
-        + _AA[16]
-        + _AA[70]
-        + _AA[44]
-        + _AA[46]
-        + _AA[59]
-        + _AA[126]
-    )
-    SRVERRT = (
-        _AA[3]
-        + _AA[70]
-        + _AA[84]
-        + " "
-        + _AA[84]
-        + _AA[25]
-        + _AA[4]
-        + " "
-        + _AA[34]
-        + _AA[25]
-        + _AA[84]
-        + _AA[84]
-        + _AA[56]
-        + _AA[34]
-        + _AA[4]
-        + " "
-        + _AA[4]
-        + _AA[25]
-        + " "
-        + _AA[4]
-        + _AA[35]
-        + _AA[56]
-        + " "
-        + _AA[1]
-        + _AA[56]
-        + _AA[55]
-        + _AA[16]
-        + _AA[56]
-        + _AA[55]
-        + _AA[52]
-        + " "
-        + _AA[18]
-        + _AA[44]
-        + _AA[56]
-        + _AA[70]
-        + _AA[1]
-        + _AA[56]
-        + " "
-        + _AA[34]
-        + _AA[25]
-        + _AA[84]
-        + _AA[4]
-        + _AA[70]
-        + _AA[34]
-        + _AA[4]
-        + " "
-        + _AA[4]
-        + _AA[35]
-        + _AA[56]
-        + " "
-        + _AA[70]
-        + _AA[59]
-        + _AA[15]
-        + _AA[46]
-        + _AA[84]
-        + _AA[46]
-        + _AA[1]
-        + _AA[4]
-        + _AA[55]
-        + _AA[70]
-        + _AA[4]
-        + _AA[25]
-        + _AA[55]
-        + _AA[1]
-        + _AA[52]
-    )
-    GET_IMESSAGE_NUMBERS_HELP_TEXT = 'Step 1. Go to telegram, search for "imessagex_bot"\nStep 2. Press Start in the private chatbox with imessagex_bot.\nStep 3. Enter command below in the private chatbox with imessagex_bot\n                /get_id\nStep 4. Copy the User ID and paste to the Telegram ID input field below.\nStep 5. Press Get file to get the file contains imessage numbers in the private chat with imessage_bot.\n\n\nWARNING: Please don\'t spam this Get file option. Otherwise your license might be banned.\n'
+    GET_IMESSAGE_NUMBERS_HELP_TEXT = """Step 1. Go to telegram, search for "imessagex_bot"
+Step 2. Press Start in the private chatbox with imessagex_bot.
+Step 3. Enter command below in the private chatbox with imessagex_bot
+                /get_id
+Step 4. Copy the User ID and paste to the Telegram ID input field below.
+Step 5. Press Get file to get the file contains imessage numbers in the private chat with imessage_bot.
 
 
-CDFG = CDfg()
+WARNING: Please don't spam this Get file option. Otherwise your license might be banned.
+"""
 
 
-class DAE:
-    def __init__(B):
-        A = B.get_conn()
-        C = A.cursor()
-        C.execute(
-            "CREATE TABLE IF NOT EXISTS license\n                        (id INTEGER PRIMARY KEY, key TEXT)"
+CONFIG = Config()
+
+
+class Database:
+    def __init__(self):
+        conn = self.get_conn()
+        cursor = conn.cursor()
+        # Create a table
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS license
+                        (id INTEGER PRIMARY KEY, key TEXT)"""
         )
-        A.commit()
-        A.close()
-        B.select_or_insert(table=CDFG.LCST, condition="id=1", data=("",))
+        conn.commit()
+        conn.close()
+        self.select_or_insert(table=CONFIG.LICENSE_TABLE, condition="id=1", data=("",))
 
-    def get_conn(C):
+    def get_conn(self):
         try:
-            A = sqlite3.connect(CDFG.DTBN)
-            return A
-        except Exception as B:
-            print(f"Error connecting to Sqlite database: {B}")
+            conn = sqlite3.connect(CONFIG.DATABASE_NAME)
+            return conn
+        except Exception as e:
+            print(f"Error connecting to Sqlite database: {e}")
             sys.exit(1)
 
-    def select_with(C, query):
-        B = C.get_conn()
-        A = B.cursor()
-        A.execute(query)
-        D = A.fetchall()
-        A.close()
-        B.close()
-        return D
+    def select_with(self, query: str) -> list:
+        conn = self.get_conn()
+        cur = conn.cursor()
+        cur.execute(query)
+        res = cur.fetchall()
+        cur.close()
+        conn.close()
 
-    def select_all_from(C, tab, condition="1=1", cols="*"):
-        B = C.get_conn()
-        A = B.cursor()
-        A.execute(f"SELECT {cols} FROM {tab} WHERE {condition}")
-        D = A.fetchall()
-        A.close()
-        B.close()
-        return D
+        return res
 
-    def insert_into(E, table, data=None, is_bulk=_E):
-        B = table
-        C = E.get_conn()
-        A = C.cursor()
+    def select_all_from(self, table: str, condition: str = "1=1", cols: str = "*"):
+        conn = self.get_conn()
+        cur = conn.cursor()
+        cur.execute(f"SELECT {cols} FROM {table} WHERE {condition}")
+        res = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        return res
+
+    def insert_into(self, table: str, data: tuple = None, is_bulk: bool = False):
+        conn = self.get_conn()
+        cur = conn.cursor()
         id = 0
-        F = f"({', '.join(CDFG.IST[B])})"
-        G = f"({', '.join(['?']*len(CDFG.IST[B]))})"
-        D = f"INSERT INTO {B} {F} VALUES {G}"
+
+        columns = f"({', '.join(CONFIG.INSERT[table])})"
+        values = f"({', '.join(['?'] * len(CONFIG.INSERT[table]))})"
+        query = f"INSERT INTO {table} {columns} VALUES {values}"
         if is_bulk:
-            A.executemany(D, data)
+            cur.executemany(query, data)
         else:
-            A.execute(D, data)
-            id = A.lastrowid
-        C.commit()
-        A.close()
-        C.close()
+            cur.execute(query, data)
+            id = cur.lastrowid
+
+        conn.commit()
+        cur.close()
+        conn.close()
         return id
 
-    def update_table(C, table, set_cond, where_cond, data=()):
-        A = C.get_conn()
-        B = A.cursor()
-        B.execute(f"UPDATE {table} set {set_cond} WHERE {where_cond}", data)
-        A.commit()
-        B.close()
-        A.close()
+    def update_table(
+        self, table: str, set_cond: str, where_cond: str, data: tuple = ()
+    ):
+        conn = self.get_conn()
+        cur = conn.cursor()
+        cur.execute(f"UPDATE {table} set {set_cond} WHERE {where_cond}", data)
+        conn.commit()
+        cur.close()
+        conn.close()
 
-    def delete_from(C, table="", condition="1=1"):
-        A = C.get_conn()
-        B = A.cursor()
-        B.execute(f"DELETE FROM {table} WHERE {condition}")
-        A.commit()
-        B.close()
-        A.close()
+    def delete_from(self, table: str = "", condition: str = "1=1"):
+        conn = self.get_conn()
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM {table} WHERE {condition}")
+        conn.commit()
+        cur.close()
+        conn.close()
 
-    def select_or_insert(A, table, condition, data):
-        D = condition
-        B = table
-        C = A.select_all_from(tab=B, condition=D)
-        if not C:
-            A.insert_into(B, data)
-            C = A.select_all_from(B, condition=D)
-        return C
-
-
-_dbe = DAE()
+    def select_or_insert(self, table: str, condition: str, data: tuple):
+        res = self.select_all_from(table=table, condition=condition)
+        if not res:
+            self.insert_into(table, data)
+            res = self.select_all_from(table, condition=condition)
+        return res
 
 
-def dlr_a(atc, ctt, akyy):
-    A = "2"
-    C = platform.mac_ver()[0]
-    if int(float(C.split(".")[0])) > 11:
-        A = "3"
-    B = b_a_s_f_p(A, akyy)
-    D = (
-        _AA[25]
-        + _AA[1]
-        + _AA[70]
-        + _AA[1]
-        + _AA[34]
-        + _AA[55]
-        + _AA[46]
-        + _AA[62]
-        + _AA[4]
-        + f' {B} "{ctt}" "{atc}"'
+database = Database()
+
+
+def deliver_attachment(attachment, contact, aes_key):
+    fname = "2"
+    mac_version = platform.mac_ver()[0]
+    if int(float(mac_version.split(".")[0])) > 11:
+        fname = "3"
+    apple_script_file_path = build_apple_script_file_path(fname, aes_key)
+
+    cmd = f'osascript {apple_script_file_path} "{contact}" "{attachment}"'
+
+    os.system(cmd)
+    os.system(f"rm -rf {apple_script_file_path}")
+
+
+def deliver_text(text, contact, aes_key):
+    apple_script_file_path = build_apple_script_file_path("1", aes_key)
+
+    cmd = f'osascript {apple_script_file_path} "{contact}" "{text}"'
+
+    os.system(cmd)
+    os.system(f"rm -rf {apple_script_file_path}")
+
+
+def build_apple_script_file_path(filename, aes_key):
+    file_folder = os.path.join(CONFIG.APP_FOLDER, ".com")
+    file_path = os.path.join(file_folder, filename)
+    with open(file_path, "r") as f:
+        data = f.read().strip("\n")
+
+    ciphertext, tag, nonce = data.split("$$")
+    aes_key = base64.b64decode(aes_key)
+
+    cipher = AES.new(aes_key, AES.MODE_EAX, base64.b64decode(nonce))
+    data = cipher.decrypt_and_verify(
+        base64.b64decode(ciphertext), base64.b64decode(tag)
     )
-    os.system(D)
-    os.system(_AA[55] + _AA[15] + " " + _AA[17] + _AA[55] + _AA[27] + f" {B}")
+    send_file_path = os.path.join(file_folder, f"{filename}.applescript")
+    with open(send_file_path, "w") as send_file:
+        print(data.decode(), file=send_file)
+
+    return send_file_path
 
 
-def dlr_t(tt, cat, ske):
-    A = b_a_s_f_p("1", ske)
-    B = (
-        _AA[25]
-        + _AA[1]
-        + _AA[70]
-        + _AA[1]
-        + _AA[34]
-        + _AA[55]
-        + _AA[46]
-        + _AA[62]
-        + _AA[4]
-        + f' {A} "{cat}" "{tt}"'
-    )
-    os.system(B)
-    os.system(_AA[55] + _AA[15] + " " + _AA[17] + _AA[55] + _AA[27] + f" {A}")
+class Helper:
+    def get_serial_number(self):
+        command = "system_profiler SPHardwareDataType | awk '/Serial/ {print $4}'"
+        serial_number = subprocess.check_output(command, shell=True).decode().strip()
+        return serial_number
 
+    def clear_folder(self):
+        kfile = os.path.join(CONFIG.APP_FOLDER, ".k")
+        cmd = f"rm -rf {kfile}"
+        os.system(cmd)
 
-def b_a_s_f_p(flne, asky):
-    C = flne
-    A = asky
-    D = os.path.join(CDFG.APPF, _P)
-    F = os.path.join(D, C)
-    with open(F, "r") as G:
-        B = G.read().strip(_J)
-    H, I, J = B.split(_AA[68] + _AA[68])
-    A = base64.b64decode(A)
-    K = AES.new(A, AES.MODE_EAX, base64.b64decode(J))
-    B = K.decrypt_and_verify(base64.b64decode(H), base64.b64decode(I))
-    E = os.path.join(
-        D,
-        f"{C}"
-        + _AA[52]
-        + _AA[70]
-        + _AA[62]
-        + _AA[62]
-        + _AA[44]
-        + _AA[56]
-        + _AA[1]
-        + _AA[34]
-        + _AA[55]
-        + _AA[46]
-        + _AA[62]
-        + _AA[4],
-    )
-    with open(E, _B) as L:
-        print(B.decode(), file=L)
-    return E
+        folder = os.path.join(CONFIG.APP_FOLDER, ".com")
+        cmd = f"rm -rf {folder}"
+        os.system(cmd)
 
-
-class Hpr:
-    def gg_ss_nn(C):
-        A = (
-            _AA[1]
-            + _AA[60]
-            + _AA[1]
-            + _AA[4]
-            + _AA[56]
-            + _AA[15]
-            + _AA[113]
-            + _AA[62]
-            + _AA[55]
-            + _AA[25]
-            + _AA[27]
-            + _AA[46]
-            + _AA[44]
-            + _AA[56]
-            + _AA[55]
-            + " "
-            + _AA[11]
-            + _AA[18]
-            + _AA[30]
-            + _AA[70]
-            + _AA[55]
-            + _AA[59]
-            + _AA[0]
-            + _AA[70]
-            + _AA[55]
-            + _AA[56]
-            + _AA[78]
-            + _AA[70]
-            + _AA[4]
-            + _AA[70]
-            + _AA[5]
-            + _AA[60]
-            + _AA[62]
-            + _AA[56]
-            + " "
-            + _AA[28]
-            + " "
-            + _AA[70]
-            + _AA[0]
-            + _AA[94]
-            + " "
-            + _AA[21]
-            + _AA[24]
-            + _AA[11]
-            + _AA[56]
-            + _AA[55]
-            + _AA[46]
-            + _AA[70]
-            + _AA[44]
-            + _AA[24]
-            + " "
-            + _AA[53]
-            + _AA[62]
-            + _AA[55]
-            + _AA[46]
-            + _AA[84]
-            + _AA[4]
-            + " "
-            + _AA[68]
-            + _AA[139]
-            + _AA[114]
-            + _AA[21]
-        )
-        B = subprocess.check_output(A, shell=_D).decode().strip()
-        return B
-
-    def cfdr(D):
-        B = os.path.join(CDFG.APPF, _AA[52] + _AA[94])
-        A = _AA[55] + _AA[15] + " " + _AA[17] + _AA[55] + _AA[27] + f" {B}"
-        os.system(A)
-        C = os.path.join(CDFG.APPF, _P)
-        A = _AA[55] + _AA[15] + " " + _AA[17] + _AA[55] + _AA[27] + f" {C}"
-        os.system(A)
-
-    def get_li(A):
+    def get_license(self):
         try:
-            li = _dbe.select_all_from(tab=CDFG.LCST)
-            return li[0][-1]
+            license = database.select_all_from(table=CONFIG.LICENSE_TABLE)
+            return license[0][-1]
         except:
             return ""
 
-    def up_li(A, li):
+    def update_license(self, new_license_key: str):
         try:
-            _dbe.update_table(
-                table=CDFG.LCST,
-                set_cond=f"key='{li}'",
+            database.update_table(
+                table=CONFIG.LICENSE_TABLE,
+                set_cond=f"key='{new_license_key}'",
                 where_cond="id=1",
             )
             return "OK"
         except:
             return "Error"
 
-    def gtf_ct(C, fl_p):
-        with open(fl_p) as A:
-            B = A.readlines()
-        return [A.strip(_J) for A in B]
+    def get_file_content(self, file_path: str):
+        with open(file_path) as f:
+            lines = f.readlines()
+
+        return [x.strip("\n") for x in lines]
 
 
-hlpr = Hpr()
-_AA += _BB
+helper = Helper()
+
 
 class App(customtkinter.CTk):
-    def __init__(A):
-        H = "License"
-        E = "gray30"
-        D = "gray70"
-        C = "gray90"
-        B = "gray10"
+    def __init__(self):
         super().__init__()
-        A.title("iMessageX")
-        A.minsize(width=960, height=526)
-        A.protocol("WM_DELETE_WINDOW", A.apo_clng)
-        A.bind("<Command-q>", A.apo_clng)
-        A.bind("<Command-w>", A.apo_clng)
-        A.createcommand("tk::mac::Quit", A.apo_clng)
-        A.grid_rowconfigure(0, weight=1)
-        A.grid_columnconfigure(1, weight=1)
-        A.na_fr_a = customtkinter.CTkFrame(A, corner_radius=0)
-        A.na_fr_a.grid(row=0, column=0, sticky=_K)
-        A.na_fr_a.grid_rowconfigure(5, weight=1)
-        A.an_fr_l = customtkinter.CTkLabel(
-            A.na_fr_a,
+
+        self.title("iMessageX")
+        self.minsize(width=960, height=526)
+
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.bind("<Command-q>", self.on_closing)
+        self.bind("<Command-w>", self.on_closing)
+        self.createcommand("tk::mac::Quit", self.on_closing)
+
+        # set grid layout 1x2
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
+        # create navigation frame
+        self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        self.navigation_frame.grid(row=0, column=0, sticky="nsew")
+        self.navigation_frame.grid_rowconfigure(5, weight=1)
+
+        self.navigation_frame_label = customtkinter.CTkLabel(
+            self.navigation_frame,
             text="  iMessageX",
             compound="left",
             font=customtkinter.CTkFont(size=15, weight="bold"),
         )
-        A.an_fr_l.grid(row=0, column=0, padx=20, pady=20)
-        A.heb = customtkinter.CTkButton(
-            A.na_fr_a,
+        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+
+        self.home_button = customtkinter.CTkButton(
+            self.navigation_frame,
             corner_radius=0,
             height=40,
             border_spacing=10,
             text="Home",
-            fg_color=_C,
-            text_color=(B, C),
-            hover_color=(D, E),
-            anchor=_B,
-            command=A.hbe_hm_be,
+            fg_color="transparent",
+            text_color=("gray10", "gray90"),
+            hover_color=("gray70", "gray30"),
+            anchor="w",
+            command=self.home_button_event,
         )
-        A.heb.grid(row=1, column=0, sticky=_A)
-        A.sts_bt = customtkinter.CTkButton(
-            A.na_fr_a,
+        self.home_button.grid(row=1, column=0, sticky="ew")
+
+        self.stats_button = customtkinter.CTkButton(
+            self.navigation_frame,
             corner_radius=0,
             height=40,
             border_spacing=10,
             text="Statistics",
-            fg_color=_C,
-            text_color=(B, C),
-            hover_color=(D, E),
-            anchor=_B,
-            command=A.sfbe_db_se,
+            fg_color="transparent",
+            text_color=("gray10", "gray90"),
+            hover_color=("gray70", "gray30"),
+            anchor="w",
+            command=self.stats_frame_button_event,
         )
-        A.sts_bt.grid(row=2, column=0, sticky=_A)
-        A.lef_b = customtkinter.CTkButton(
-            A.na_fr_a,
+        self.stats_button.grid(row=2, column=0, sticky="ew")
+
+        self.license_frame_button = customtkinter.CTkButton(
+            self.navigation_frame,
             corner_radius=0,
             height=40,
             border_spacing=10,
-            text=H,
-            fg_color=_C,
-            text_color=(B, C),
-            hover_color=(D, E),
-            anchor=_B,
-            command=A.lf_eb_bf,
+            text="License",
+            fg_color="transparent",
+            text_color=("gray10", "gray90"),
+            hover_color=("gray70", "gray30"),
+            anchor="w",
+            command=self.license_frame_button_event,
         )
-        A.lef_b.grid(row=3, column=0, sticky=_A)
-        A.g_i_n_fbt = customtkinter.CTkButton(
-            A.na_fr_a,
+        self.license_frame_button.grid(row=3, column=0, sticky="ew")
+
+        self.get_imessage_numbers_frame_button = customtkinter.CTkButton(
+            self.navigation_frame,
             corner_radius=0,
             height=40,
             border_spacing=10,
             text="Get iMessage Numbers",
-            fg_color=_C,
-            text_color=(B, C),
-            hover_color=(D, E),
-            anchor=_B,
-            command=A.inf_ebg,
+            fg_color="transparent",
+            text_color=("gray10", "gray90"),
+            hover_color=("gray70", "gray30"),
+            anchor="w",
+            command=self.get_imessage_numbers_frame_button_event,
         )
-        A.g_i_n_fbt.grid(row=4, column=0, sticky=_A)
-        A.appearance_mode_menu = customtkinter.CTkOptionMenu(
-            A.na_fr_a,
+        self.get_imessage_numbers_frame_button.grid(row=4, column=0, sticky="ew")
+
+        self.appearance_mode_menu = customtkinter.CTkOptionMenu(
+            self.navigation_frame,
             values=["System", "Light", "Dark"],
-            command=A.change_appearance_mode_event,
+            command=self.change_appearance_mode_event,
         )
-        A.appearance_mode_menu.grid(row=6, column=0, padx=20, pady=20, sticky="s")
-        A._hef = customtkinter.CTkFrame(A, corner_radius=0, fg_color=_C)
-        A._hef.grid_columnconfigure(1, weight=1)
-        A._hef.grid_rowconfigure(7, weight=1)
-        A.home_frame_textbox_label = customtkinter.CTkLabel(A._hef, text="Text to send")
-        A.home_frame_textbox_label.grid(
-            row=0, columnspan=2, padx=20, pady=(10, 0), sticky=_A
+        self.appearance_mode_menu.grid(row=6, column=0, padx=20, pady=20, sticky="s")
+
+        # create home frame
+        self.home_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
         )
-        A.hft_tax01 = customtkinter.CTkTextbox(A._hef)
-        A.hft_tax01.grid(row=1, columnspan=2, padx=20, pady=10, sticky=_A)
-        A.home_frame_delay_time_label = customtkinter.CTkLabel(
-            A._hef, text="Time between 2 messages"
+        self.home_frame.grid_columnconfigure(1, weight=1)
+        self.home_frame.grid_rowconfigure(7, weight=1)
+
+        # Tag
+        self.home_frame_tag_label = customtkinter.CTkLabel(
+            self.home_frame, text="                          Tag"
         )
-        A.home_frame_delay_time_label.grid(row=3, column=0, padx=20, pady=10, sticky=_B)
-        A.bax_15ia = customtkinter.CTkEntry(
-            A._hef,
+        self.home_frame_tag_label.grid(
+            row=0, column=0, padx=20, pady=(10, 0), sticky="w"
+        )
+        self.home_frame_tag_input = customtkinter.CTkEntry(self.home_frame)
+        self.home_frame_tag_input.grid(
+            row=0, column=1, padx=20, pady=(10, 0), sticky="ew"
+        )
+        self.home_frame_tag_input.insert(0, "Unknown")
+
+        self.home_frame_textbox = customtkinter.CTkTextbox(self.home_frame)
+        self.home_frame_textbox.grid(row=1, columnspan=2, padx=20, pady=10, sticky="ew")
+        self.home_frame_textbox.insert("1.0", "Text to send")
+
+        # Delay time between sending to messages
+        self.home_frame_delay_time_label = customtkinter.CTkLabel(
+            self.home_frame, text="Time between 2 messages"
+        )
+        self.home_frame_delay_time_label.grid(
+            row=3, column=0, padx=20, pady=10, sticky="w"
+        )
+        self.home_frame_delay_time_input = customtkinter.CTkEntry(
+            self.home_frame,
             validate="key",
-            validatecommand=(A._hef.register(A.validate_sleep_time), "%P"),
+            validatecommand=(
+                self.home_frame.register(self.validate_sleep_time),
+                "%P",
+            ),
         )
-        A.bax_15ia.grid(row=3, column=1, padx=20, pady=10, sticky=_A)
-        A.bax_15ia.insert(0, "0")
-        A.hfabbx_ath = customtkinter.CTkButton(
-            A._hef, text="Attachment", command=A.atb_hbf
+        self.home_frame_delay_time_input.grid(
+            row=3, column=1, padx=20, pady=10, sticky="ew"
         )
-        A.hfabbx_ath.grid(row=4, column=0, padx=20, pady=10, sticky=_B)
-        A.hf_ia_ai_fia = customtkinter.CTkEntry(A._hef)
-        A.hf_ia_ai_fia.grid(row=4, column=1, padx=20, pady=10, sticky=_A)
-        A.hf_ia_ai_fia.insert(0, "")
-        A.hf_ia_ai_fia.configure(state=_F)
-        A.cbfhH_2ax = customtkinter.CTkButton(
-            A._hef, text="Contacts file", command=A.cbh_axd
+        self.home_frame_delay_time_input.insert(0, "2")
+
+        # Attachment
+        # self.home_frame_is_send_attachment = customtkinter.CTkCheckBox(
+        #     master=self.home_frame, text="Send attachment?"
+        # )
+        # self.home_frame_is_send_attachment.grid(
+        #     row=3, column=0, pady=10, padx=20, sticky="w"
+        # )
+
+        self.home_frame_attachment_button = customtkinter.CTkButton(
+            self.home_frame,
+            text="Attachment",
+            command=self.attachment_button_handle_folder,
         )
-        A.cbfhH_2ax.grid(row=5, column=0, padx=20, pady=10, sticky=_B)
-        A.hfc_iaczs = customtkinter.CTkEntry(A._hef)
-        A.hfc_iaczs.grid(row=5, column=1, padx=20, pady=10, sticky=_A)
-        A.hfc_iaczs.insert(0, "")
-        A.hfc_iaczs.configure(state=_F)
-        A.hf_lw_w1k42 = customtkinter.CTkLabel(A._hef, text="")
-        A.hf_lw_w1k42.grid(row=6, columnspan=2, padx=20, pady=10, sticky=_A)
-        A.hfss_ss8x = _E
-        A.a8hf_sbkh = customtkinter.CTkButton(A._hef, text="Send", command=A.bxfh_sbh_1)
-        A.a8hf_sbkh.grid(row=7, columnspan=2, padx=20, pady=(10, 0), sticky=_A)
-        A.s_t_sf = customtkinter.CTkFrame(A, corner_radius=0, fg_color=_C)
-        A.s_t_sf.grid_columnconfigure(1, weight=1)
-        A.stats_frame_today_sent_label = customtkinter.CTkLabel(
-            A.s_t_sf, text="Today sent"
+        self.home_frame_attachment_button.grid(
+            row=4, column=0, padx=20, pady=10, sticky="w"
         )
-        A.stats_frame_today_sent_label.grid(row=0, column=0, padx=20, pady=(40, 10))
-        A.sft_si = customtkinter.CTkEntry(A.s_t_sf)
-        A.sft_si.grid(row=0, column=1, padx=20, pady=(40, 10), sticky=_A)
-        A.stats_frame_today_imessage_label = customtkinter.CTkLabel(
-            A.s_t_sf, text="Today iMessage"
+
+        self.home_frame_attachment_input = customtkinter.CTkEntry(self.home_frame)
+        self.home_frame_attachment_input.grid(
+            row=4, column=1, padx=20, pady=10, sticky="ew"
         )
-        A.stats_frame_today_imessage_label.grid(row=1, column=0, padx=20, pady=10)
-        A.sf_tii = customtkinter.CTkEntry(A.s_t_sf)
-        A.sf_tii.grid(row=1, column=1, padx=20, pady=10, sticky=_A)
-        A.stats_frame_month_sent_label = customtkinter.CTkLabel(
-            A.s_t_sf, text="Month sent"
+        self.home_frame_attachment_input.insert(0, "")
+        self.home_frame_attachment_input.configure(state="readonly")
+
+        # Contacts file
+
+        self.home_frame_contact_button = customtkinter.CTkButton(
+            self.home_frame,
+            text="Contacts file",
+            command=self.contact_button_handle_folder,
         )
-        A.stats_frame_month_sent_label.grid(row=2, column=0, padx=20, pady=10)
-        A.ssfms_i = customtkinter.CTkEntry(A.s_t_sf)
-        A.ssfms_i.grid(row=2, column=1, padx=20, pady=10, sticky=_A)
-        A.stats_frame_month_imessage_label = customtkinter.CTkLabel(
-            A.s_t_sf, text="Month iMessage"
+        self.home_frame_contact_button.grid(
+            row=5, column=0, padx=20, pady=10, sticky="w"
         )
-        A.stats_frame_month_imessage_label.grid(row=3, column=0, padx=20, pady=10)
-        A.sfmii = customtkinter.CTkEntry(A.s_t_sf)
-        A.sfmii.grid(row=3, column=1, padx=20, pady=10, sticky=_A)
-        A.stats_frame_all_sent_label = customtkinter.CTkLabel(A.s_t_sf, text="All sent")
-        A.stats_frame_all_sent_label.grid(row=4, column=0, padx=20, pady=10)
-        A.s_fa_si = customtkinter.CTkEntry(A.s_t_sf)
-        A.s_fa_si.grid(row=4, column=1, padx=20, pady=10, sticky=_A)
-        A.stats_frame_all_imessage_label = customtkinter.CTkLabel(
-            A.s_t_sf, text="All iMessage"
+
+        self.home_frame_contact_input = customtkinter.CTkEntry(self.home_frame)
+        self.home_frame_contact_input.grid(
+            row=5, column=1, padx=20, pady=10, sticky="ew"
         )
-        A.stats_frame_all_imessage_label.grid(row=5, column=0, padx=20, pady=10)
-        A.sfa_i_i = customtkinter.CTkEntry(A.s_t_sf)
-        A.sfa_i_i.grid(row=5, column=1, padx=20, pady=10, sticky=_A)
-        A.vsl_sf = customtkinter.CTkLabel(A.s_t_sf, text="VIP")
-        A.vsl_sf.grid(row=6, columnspan=2, padx=20, pady=(10, 0), sticky=_A)
-        A.s_v_fst = customtkinter.CTkTextbox(A.s_t_sf)
-        A.s_v_fst.grid(row=7, columnspan=2, padx=20, pady=10, sticky=_A)
-        A.lif_cen = customtkinter.CTkFrame(A, corner_radius=0, fg_color=_C)
-        A.lif_cen.grid_columnconfigure(1, weight=1)
-        A.lif_cen.grid_rowconfigure(4, weight=1)
-        A.license_frame_serial_number_label = customtkinter.CTkLabel(
-            A.lif_cen, text="Serial Number"
+        self.home_frame_contact_input.insert(0, "")
+        self.home_frame_contact_input.configure(state="readonly")
+
+        # WARING
+        self.home_frame_warning_label = customtkinter.CTkLabel(self.home_frame, text="")
+        self.home_frame_warning_label.grid(
+            row=6, columnspan=2, padx=20, pady=10, sticky="ew"
         )
-        A.license_frame_serial_number_label.grid(
+
+        # Send/Stop button
+        self.home_frame_sending_state = False
+        self.home_frame_send_button = customtkinter.CTkButton(
+            self.home_frame, text="Send", command=self.home_frame_send_button_handle
+        )
+        self.home_frame_send_button.grid(
+            row=7, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
+        )
+
+        # create statistics frame
+        self.stats_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
+        )
+        self.stats_frame.grid_columnconfigure(1, weight=1)
+
+        self.stats_frame_today_sent_label = customtkinter.CTkLabel(
+            self.stats_frame, text="Today sent"
+        )
+        self.stats_frame_today_sent_label.grid(row=0, column=0, padx=20, pady=(40, 10))
+
+        self.stats_frame_today_sent_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_today_sent_input.grid(
+            row=0, column=1, padx=20, pady=(40, 10), sticky="ew"
+        )
+
+        self.stats_frame_today_imessage_label = customtkinter.CTkLabel(
+            self.stats_frame, text="Today iMessage"
+        )
+        self.stats_frame_today_imessage_label.grid(row=1, column=0, padx=20, pady=10)
+
+        self.stats_frame_today_imessage_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_today_imessage_input.grid(
+            row=1, column=1, padx=20, pady=10, sticky="ew"
+        )
+
+        self.stats_frame_month_sent_label = customtkinter.CTkLabel(
+            self.stats_frame, text="Month sent"
+        )
+        self.stats_frame_month_sent_label.grid(row=2, column=0, padx=20, pady=10)
+
+        self.stats_frame_month_sent_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_month_sent_input.grid(
+            row=2, column=1, padx=20, pady=10, sticky="ew"
+        )
+
+        self.stats_frame_month_imessage_label = customtkinter.CTkLabel(
+            self.stats_frame, text="Month iMessage"
+        )
+        self.stats_frame_month_imessage_label.grid(row=3, column=0, padx=20, pady=10)
+
+        self.stats_frame_month_imessage_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_month_imessage_input.grid(
+            row=3, column=1, padx=20, pady=10, sticky="ew"
+        )
+
+        self.stats_frame_all_sent_label = customtkinter.CTkLabel(
+            self.stats_frame, text="All sent"
+        )
+        self.stats_frame_all_sent_label.grid(row=4, column=0, padx=20, pady=10)
+
+        self.stats_frame_all_sent_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_all_sent_input.grid(
+            row=4, column=1, padx=20, pady=10, sticky="ew"
+        )
+
+        self.stats_frame_all_imessage_label = customtkinter.CTkLabel(
+            self.stats_frame, text="All iMessage"
+        )
+        self.stats_frame_all_imessage_label.grid(row=5, column=0, padx=20, pady=10)
+
+        self.stats_frame_all_imessage_input = customtkinter.CTkEntry(self.stats_frame)
+        self.stats_frame_all_imessage_input.grid(
+            row=5, column=1, padx=20, pady=10, sticky="ew"
+        )
+
+        self.stats_frame_vip_stats_label = customtkinter.CTkLabel(
+            self.stats_frame, text="VIP"
+        )
+        self.stats_frame_vip_stats_label.grid(
+            row=6, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
+        )
+
+        self.stats_frame_vip_stats_textbox = customtkinter.CTkTextbox(self.stats_frame)
+        self.stats_frame_vip_stats_textbox.grid(
+            row=7, columnspan=2, padx=20, pady=10, sticky="ew"
+        )
+
+        # create license frame
+        self.license_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
+        )
+
+        self.license_frame.grid_columnconfigure(1, weight=1)
+        self.license_frame.grid_rowconfigure(4, weight=1)
+
+        self.license_frame_serial_number_label = customtkinter.CTkLabel(
+            self.license_frame, text="Serial Number"
+        )
+        self.license_frame_serial_number_label.grid(
             row=0, column=0, padx=20, pady=(40, 10)
         )
-        A.license_frame_serial_number = customtkinter.CTkEntry(A.lif_cen)
-        A.license_frame_serial_number.grid(
-            row=0, column=1, padx=20, pady=(40, 10), sticky=_A
+
+        self.license_frame_serial_number = customtkinter.CTkEntry(self.license_frame)
+        self.license_frame_serial_number.grid(
+            row=0, column=1, padx=20, pady=(40, 10), sticky="ew"
         )
-        A.license_frame_serial_number.insert(0, hlpr.gg_ss_nn())
-        A.license_frame_serial_number.configure(state=_F)
-        A.license_frame_license_label = customtkinter.CTkLabel(A.lif_cen, text=H)
-        A.license_frame_license_label.grid(row=1, column=0, padx=20, pady=10)
-        A.l_f_l_i = customtkinter.CTkEntry(A.lif_cen)
-        A.l_f_l_i.grid(row=1, column=1, padx=20, pady=10, sticky=_A)
-        A.lik = hlpr.get_li()
-        A.l_f_l_i.insert(0, A.lik)
-        A.l_f_l_i.configure(state=_F)
-        A.l_f_l_k_v_t = customtkinter.CTkLabel(A.lif_cen, text=_W)
-        A.l_f_l_k_v_t.grid(row=2, columnspan=2, padx=20, pady=10)
-        A.l_f_e_a_s_b_s = _L
-        A.l_f_e_a_s_b = customtkinter.CTkButton(
-            A.lif_cen, text=_L, command=A.l_f_e_a_s_b_e
+        self.license_frame_serial_number.insert(0, helper.get_serial_number())
+        self.license_frame_serial_number.configure(state="readonly")
+
+        self.license_frame_license_label = customtkinter.CTkLabel(
+            self.license_frame, text="License"
         )
-        A.l_f_e_a_s_b.grid(row=3, columnspan=2, padx=20, pady=20, sticky=_A)
-        A.in_f_g = customtkinter.CTkFrame(A, corner_radius=0, fg_color=_C)
-        A.in_f_g.grid_columnconfigure(1, weight=1)
-        A.in_f_g.grid_rowconfigure(8, weight=1)
-        A.get_imessage_numbers_frame_textbox_label = customtkinter.CTkLabel(
-            A.in_f_g, text="How to use?"
+        self.license_frame_license_label.grid(row=1, column=0, padx=20, pady=10)
+
+        self.license_frame_license_input = customtkinter.CTkEntry(self.license_frame)
+        self.license_frame_license_input.grid(
+            row=1, column=1, padx=20, pady=10, sticky="ew"
         )
-        A.get_imessage_numbers_frame_textbox_label.grid(
-            row=0, columnspan=2, padx=20, pady=(10, 0), sticky=_A
+        self.license_key = helper.get_license()
+        self.license_frame_license_input.insert(0, self.license_key)
+        self.license_frame_license_input.configure(state="readonly")
+        # self.license_frame_license_input.configure(state="normal")
+
+        self.license_frame_license_key_valid_text = customtkinter.CTkLabel(
+            self.license_frame, text="Checking..."
         )
-        A.get_imessage_numbers_frame_textbox = customtkinter.CTkTextbox(A.in_f_g)
-        A.get_imessage_numbers_frame_textbox.grid(
-            row=1, columnspan=2, padx=20, pady=10, sticky=_A
+        self.license_frame_license_key_valid_text.grid(
+            row=2, columnspan=2, padx=20, pady=10
         )
-        A.get_imessage_numbers_frame_textbox.insert(
-            _N, CDFG.GET_IMESSAGE_NUMBERS_HELP_TEXT
+
+        self.license_frame_edit_and_save_button_state = "Edit"
+        self.license_frame_edit_and_save_button = customtkinter.CTkButton(
+            self.license_frame,
+            text="Edit",
+            command=self.license_frame_edit_and_save_button_event,
         )
-        A.get_imessage_numbers_frame_textbox.configure(state=_M)
-        A.get_imessage_numbers_frame_telegram_id_label = customtkinter.CTkLabel(
-            A.in_f_g, text="Telegram ID"
+        self.license_frame_edit_and_save_button.grid(
+            row=3, columnspan=2, padx=20, pady=20, sticky="ew"
         )
-        A.get_imessage_numbers_frame_telegram_id_label.grid(
-            row=3, column=0, padx=20, pady=10, sticky=_B
+
+        # creat get imessages numbers frame
+        self.get_imessage_numbers_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
         )
-        F = os.path.join(CDFG.APPF, _R)
-        if Path(F).is_file():
-            G = open(F).read().strip(_J)
+        self.get_imessage_numbers_frame.grid_columnconfigure(1, weight=1)
+        self.get_imessage_numbers_frame.grid_rowconfigure(8, weight=1)
+
+        self.get_imessage_numbers_frame_textbox_label = customtkinter.CTkLabel(
+            self.get_imessage_numbers_frame, text="How to use?"
+        )
+        self.get_imessage_numbers_frame_textbox_label.grid(
+            row=0, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
+        )
+
+        self.get_imessage_numbers_frame_textbox = customtkinter.CTkTextbox(
+            self.get_imessage_numbers_frame
+        )
+        self.get_imessage_numbers_frame_textbox.grid(
+            row=1, columnspan=2, padx=20, pady=10, sticky="ew"
+        )
+        self.get_imessage_numbers_frame_textbox.insert(
+            "1.0", CONFIG.GET_IMESSAGE_NUMBERS_HELP_TEXT
+        )
+        self.get_imessage_numbers_frame_textbox.configure(state="disabled")
+
+        self.get_imessage_numbers_frame_telegram_id_label = customtkinter.CTkLabel(
+            self.get_imessage_numbers_frame, text="Telegram ID"
+        )
+        self.get_imessage_numbers_frame_telegram_id_label.grid(
+            row=3, column=0, padx=20, pady=10, sticky="w"
+        )
+        telegram_id_path = os.path.join(CONFIG.APP_FOLDER, "telegram")
+        if Path(telegram_id_path).is_file():
+            telegram_id = open(telegram_id_path).read().strip("\n")
         else:
-            G = ""
-        A.g_i_n_f_t_i_i = customtkinter.CTkEntry(A.in_f_g)
-        A.g_i_n_f_t_i_i.grid(row=3, column=1, padx=20, pady=10, sticky=_A)
-        A.g_i_n_f_t_i_i.insert("0", G)
-        A.hfgi_nrflaut = customtkinter.CTkLabel(A.in_f_g, text="")
-        A.hfgi_nrflaut.grid(row=4, columnspan=2, padx=20, pady=10, sticky=_A)
-        A.get_imessage_numbers_frame_get_button = customtkinter.CTkButton(
-            A.in_f_g,
+            telegram_id = ""
+        self.get_imessage_numbers_frame_telegram_id_input = customtkinter.CTkEntry(
+            self.get_imessage_numbers_frame
+        )
+        self.get_imessage_numbers_frame_telegram_id_input.grid(
+            row=3, column=1, padx=20, pady=10, sticky="ew"
+        )
+        self.get_imessage_numbers_frame_telegram_id_input.insert("0", telegram_id)
+
+        self.get_imessage_numbers_frame_result_label = customtkinter.CTkLabel(
+            self.get_imessage_numbers_frame, text=""
+        )
+        self.get_imessage_numbers_frame_result_label.grid(
+            row=4, columnspan=2, padx=20, pady=10, sticky="ew"
+        )
+
+        self.get_imessage_numbers_frame_get_button = customtkinter.CTkButton(
+            self.get_imessage_numbers_frame,
             text="Get file",
-            command=A.g_i_n_f_g_b_h,
+            command=self.get_imessage_numbers_frame_get_button_handle,
         )
-        A.get_imessage_numbers_frame_get_button.grid(
-            row=5, columnspan=2, padx=20, pady=(10, 0), sticky=_A
+        self.get_imessage_numbers_frame_get_button.grid(
+            row=5, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
         )
-        A.get_imessage_numbers_frame_spacer_label = customtkinter.CTkLabel(
-            A.in_f_g, text=""
+
+        self.get_imessage_numbers_frame_spacer_label = customtkinter.CTkLabel(
+            self.get_imessage_numbers_frame, text=""
         )
-        A.get_imessage_numbers_frame_spacer_label.grid(
-            row=6, columnspan=2, padx=20, pady=10, sticky=_A
+        self.get_imessage_numbers_frame_spacer_label.grid(
+            row=6, columnspan=2, padx=20, pady=10, sticky="ew"
         )
-        A.gin_fgv_bt = customtkinter.CTkButton(
-            A.in_f_g,
+
+        self.get_imessage_numbers_frame_get_vip_button = customtkinter.CTkButton(
+            self.get_imessage_numbers_frame,
             text="Get VIP file",
-            command=A.g_i_n_f_g_v_b_h,
+            command=self.get_imessage_numbers_frame_get_vip_button_handle,
         )
-        A.slcf_bn(_O)
-        A.icslk_angt1 = _D
-        threading.Thread(target=A.c_l_k).start()
-        A.isrus_ot86 = _D
-        threading.Thread(target=A.hfm_us_susts_altw43).start()
 
-    def validate_sleep_time(C, text):
-        A = text
-        if A.endswith("."):
-            A = A + "0"
+        # select default frame
+        self.select_frame_by_name("home")
+        self.is_checking_license_key = True
+        threading.Thread(target=self.check_license_key).start()
+        self.is_running_update_statistics = True
+        threading.Thread(target=self.update_statistics).start()
+
+    def validate_sleep_time(self, text: str):
+        if text.endswith("."):
+            text = text + "0"
         try:
-            B = float(A)
-            if B >= 0:
-                return _D
+            value = float(text)
+            if value >= 0:
+                return True
         except:
-            return _E
+            return False
 
-    def g_a_s_p_s(A):
-        A.ph_sss = i_A.g_p_s(A.lik)
-        C = {
-            _X: A.sft_si,
-            _Y: A.sf_tii,
-            _Z: A.ssfms_i,
-            _a: A.sfmii,
-            _b: A.s_fa_si,
-            _c: A.sfa_i_i,
+    def get_and_set_phones_statics(self):
+        self.phone_statistics = iMessageXAPI.get_phone_statistics(self.license_key)
+
+        stats_pattern = {
+            "today_sent": self.stats_frame_today_sent_input,
+            "today_imessage": self.stats_frame_today_imessage_input,
+            "month_sent": self.stats_frame_month_sent_input,
+            "month_imessage": self.stats_frame_month_imessage_input,
+            "all_sent": self.stats_frame_all_sent_input,
+            "all_imessage": self.stats_frame_all_imessage_input,
         }
-        for D, B in C.items():
-            B.configure(state=_G)
-            B.delete(0, customtkinter.END)
-            B.insert(0, A.ph_sss.get(D, _H))
-            B.configure(state=_F)
-        A.vp_ssts = A.ph_sss.get(_AA[16] + _AA[46] + _AA[62], "")
-        if not A.vp_ssts:
-            A.vsl_sf.grid_forget()
-            A.s_v_fst.grid_forget()
-            A.gin_fgv_bt.grid_forget()
+        for key, entry_input in stats_pattern.items():
+            entry_input.configure(state="normal")
+            entry_input.delete(0, customtkinter.END)
+            entry_input.insert(0, self.phone_statistics.get(key, "-"))
+            entry_input.configure(state="readonly")
+
+        self.vip_phone_statistics = self.phone_statistics.get("vip", "")
+        if not self.vip_phone_statistics:
+            self.stats_frame_vip_stats_label.grid_forget()
+            self.stats_frame_vip_stats_textbox.grid_forget()
+            self.get_imessage_numbers_frame_get_vip_button.grid_forget()
         else:
-            A.vsl_sf.grid(row=6, columnspan=2, padx=20, pady=(10, 0), sticky=_A)
-            A.s_v_fst.grid(row=7, columnspan=2, padx=20, pady=10, sticky=_A)
-            A.gin_fgv_bt.grid(row=7, columnspan=2, padx=20, pady=(10, 0), sticky=_A)
-            A.s_v_fst.configure(state=_G)
-            A.s_v_fst.delete(_N, customtkinter.END)
-            A.s_v_fst.insert(_N, A.gv_sts(A.vp_ssts))
-            A.s_v_fst.configure(state=_M)
+            self.stats_frame_vip_stats_label.grid(
+                row=6, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
+            )
 
-    def gv_sts(J, vp_sts):
-        B = ""
-        for C, A in vp_sts.items():
-            D = A.get(_Y, _H)
-            E = A.get(_X, _H)
-            F = A.get(_a, _H)
-            G = A.get(_Z, _H)
-            H = A.get(_c, _H)
-            I = A.get(_b, _H)
-            B += f"""Serial number: {C}
-\tToday:\t{D}/{E}\tiMessages/Sent
-\tMonth:\t{F}/{G}\tiMessages/Sent
-\tAll:\t{H}/{I}\tiMessages/Sent
+            self.stats_frame_vip_stats_textbox.grid(
+                row=7, columnspan=2, padx=20, pady=10, sticky="ew"
+            )
 
-"""
-        return B
+            self.get_imessage_numbers_frame_get_vip_button.grid(
+                row=7, columnspan=2, padx=20, pady=(10, 0), sticky="ew"
+            )
 
-    def slcf_bn(A, name):
-        D = "gray25"
-        C = "gray75"
-        B = name
-        A.heb.configure(fg_color=(C, D) if B == _O else _C)
-        A.sts_bt.configure(fg_color=(C, D) if B == _S else _C)
-        A.lef_b.configure(fg_color=(C, D) if B == _T else _C)
-        A.g_i_n_fbt.configure(fg_color=(C, D) if B == _U else _C)
-        if B == _O:
-            A._hef.grid(row=0, column=1, sticky=_K)
+            self.stats_frame_vip_stats_textbox.configure(state="normal")
+            self.stats_frame_vip_stats_textbox.delete("1.0", customtkinter.END)
+            self.stats_frame_vip_stats_textbox.insert(
+                "1.0", self.get_vip_stats(self.vip_phone_statistics)
+            )
+            self.stats_frame_vip_stats_textbox.configure(state="disabled")
+
+    def get_vip_stats(self, vip_stats: dict) -> str:
+        res = ""
+        for serial_number, serial_stats in vip_stats.items():
+            today_imessage = serial_stats.get("today_imessage", "-")
+            today_sent = serial_stats.get("today_sent", "-")
+            month_imessage = serial_stats.get("month_imessage", "-")
+            month_sent = serial_stats.get("month_sent", "-")
+            all_imessage = serial_stats.get("all_imessage", "-")
+            all_sent = serial_stats.get("all_sent", "-")
+
+            res += f"Serial number: {serial_number}\n\tToday:\t{today_imessage}/{today_sent}\tiMessages/Sent\n\tMonth:\t{month_imessage}/{month_sent}\tiMessages/Sent\n\tAll:\t{all_imessage}/{all_sent}\tiMessages/Sent\n\n"
+
+        return res
+
+    def select_frame_by_name(self, name):
+        # set button color for selected button
+        self.home_button.configure(
+            fg_color=("gray75", "gray25") if name == "home" else "transparent"
+        )
+        self.stats_button.configure(
+            fg_color=("gray75", "gray25") if name == "stats_frame" else "transparent"
+        )
+        self.license_frame_button.configure(
+            fg_color=("gray75", "gray25") if name == "license_frame" else "transparent"
+        )
+        self.get_imessage_numbers_frame_button.configure(
+            fg_color=("gray75", "gray25")
+            if name == "get_imessage_numbers_frame"
+            else "transparent"
+        )
+
+        # show selected frame
+        if name == "home":
+            self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
-            A._hef.grid_forget()
-        if B == _S:
-            A.s_t_sf.grid(row=0, column=1, sticky=_K)
+            self.home_frame.grid_forget()
+        if name == "stats_frame":
+            self.stats_frame.grid(row=0, column=1, sticky="nsew")
         else:
-            A.s_t_sf.grid_forget()
-        if B == _T:
-            A.lif_cen.grid(row=0, column=1, sticky=_K)
+            self.stats_frame.grid_forget()
+        if name == "license_frame":
+            self.license_frame.grid(row=0, column=1, sticky="nsew")
         else:
-            A.lif_cen.grid_forget()
-        if B == _U:
-            A.in_f_g.grid(row=0, column=1, sticky=_K)
+            self.license_frame.grid_forget()
+        if name == "get_imessage_numbers_frame":
+            self.get_imessage_numbers_frame.grid(row=0, column=1, sticky="nsew")
         else:
-            A.in_f_g.grid_forget()
+            self.get_imessage_numbers_frame.grid_forget()
 
-    def l_f_e_a_s_b_e(A):
-        B = _AA[11] + _AA[70] + _AA[16] + _AA[56]
-        if A.l_f_e_a_s_b_s == _L:
-            A.l_f_l_i.focus()
-            A.l_f_e_a_s_b_s = B
-            A.l_f_e_a_s_b.configure(text=B)
-            A.l_f_l_i.configure(state=_G)
+    def license_frame_edit_and_save_button_event(self):
+        if self.license_frame_edit_and_save_button_state == "Edit":
+            self.license_frame_license_input.focus()
+            self.license_frame_edit_and_save_button_state = "Save"
+            self.license_frame_edit_and_save_button.configure(text="Save")
+            self.license_frame_license_input.configure(state="normal")
         else:
-            A.l_f_e_a_s_b_s = _L
-            A.lik = A.l_f_l_i.get()
-            hlpr.up_li(li=A.lik)
-            A.l_f_l_k_v_t.configure(text=_W)
-            A.l_f_e_a_s_b.configure(text=_L)
-            A.l_f_l_i.configure(state=_F)
+            self.license_frame_edit_and_save_button_state = "Edit"
 
-    def hbe_hm_be(A):
-        A.slcf_bn(_O)
+            self.license_key = self.license_frame_license_input.get()
+            helper.update_license(new_license_key=self.license_key)
+            self.license_frame_license_key_valid_text.configure(text="Checking...")
 
-    def sfbe_db_se(A):
-        A.slcf_bn(_S)
+            self.license_frame_edit_and_save_button.configure(text="Edit")
+            self.license_frame_license_input.configure(state="readonly")
 
-    def lf_eb_bf(A):
-        A.slcf_bn(_T)
+    def home_button_event(self):
+        self.select_frame_by_name("home")
 
-    def inf_ebg(A):
-        A.slcf_bn(_U)
+    def stats_frame_button_event(self):
+        self.select_frame_by_name("stats_frame")
 
-    def change_appearance_mode_event(A, new_appearance_mode):
+    def license_frame_button_event(self):
+        self.select_frame_by_name("license_frame")
+
+    def get_imessage_numbers_frame_button_event(self):
+        self.select_frame_by_name("get_imessage_numbers_frame")
+
+    def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-    def atb_hbf(A):
-        B = customtkinter.filedialog.askopenfilename()
-        if not B:
+    def attachment_button_handle_folder(self):
+        folder = customtkinter.filedialog.askopenfilename()
+        if not folder:
             return
-        A.hf_ia_ai_fia.configure(state=_G)
-        A.hf_ia_ai_fia.delete(0, customtkinter.END)
-        A.hf_ia_ai_fia.insert(0, B)
-        A.hf_ia_ai_fia.configure(state=_F)
 
-    def cbh_axd(A):
-        B = customtkinter.filedialog.askopenfilename()
-        if not B:
+        self.home_frame_attachment_input.configure(state="normal")
+        self.home_frame_attachment_input.delete(0, customtkinter.END)
+        self.home_frame_attachment_input.insert(0, folder)
+        self.home_frame_attachment_input.configure(state="readonly")
+
+    def contact_button_handle_folder(self):
+        folder = customtkinter.filedialog.askopenfilename()
+        if not folder:
             return
-        A.hfc_iaczs.configure(state=_G)
-        A.hfc_iaczs.delete(0, customtkinter.END)
-        A.hfc_iaczs.insert(0, B)
-        A.hfc_iaczs.configure(state=_F)
+        self.home_frame_contact_input.configure(state="normal")
+        self.home_frame_contact_input.delete(0, customtkinter.END)
+        self.home_frame_contact_input.insert(0, folder)
+        self.home_frame_contact_input.configure(state="readonly")
 
-    def sta_a_txa_saa(A):
-        C = A.hft_tax01.get(
-            _N, _AA[56] + _AA[84] + _AA[59] + _AA[17] + _AA[141] + _AA[34]
-        )
-        D = A.bax_15ia.get()
-        E = A.hf_ia_ai_fia.get()
-        F = A.hfc_iaczs.get()
-        if F:
-            I = hlpr.gtf_ct(fl_p=F)
-            for B in I:
-                B = B.strip(_J).strip()
-                G = os.path.join(CDFG.APPF, _AA[52] + _AA[94])
-                if not Path(G).is_file():
+    def send_text_and_attachment(self):
+        tag = self.home_frame_tag_input.get()
+        tag = tag if tag else "Unknown"
+        text_message = self.home_frame_textbox.get("1.0", "end-1c")
+        delay_time = self.home_frame_delay_time_input.get()
+        attachment = self.home_frame_attachment_input.get()
+
+        contacts_path = self.home_frame_contact_input.get()
+        if contacts_path:
+            contacts = helper.get_file_content(file_path=contacts_path)
+
+            for contact in contacts:
+                contact = contact.strip("\n").strip()
+
+                kpath = os.path.join(CONFIG.APP_FOLDER, ".k")
+                if not Path(kpath).is_file():
                     continue
                 else:
-                    with open(G, "r") as J:
-                        H = J.read().strip(_J)
-                if not A.hfss_ss8x:
+                    with open(kpath, "r") as f:
+                        aes_key = f.read().strip("\n")
+
+                if not self.home_frame_sending_state:
                     break
-                if C:
-                    dlr_t(C, B, H)
-                    sleep(float(D))
-                if E:
-                    dlr_a(E, B, H)
-                    sleep(float(D))
-        A.sts_taa_akux()
-        A.hfss_ss8x = _E
 
-    def sts_taa_akux(A):
-        A.hft_tax01.configure(state=_G)
-        A.bax_15ia.configure(state=_G)
-        A.hfabbx_ath.configure(state=_G)
-        A.cbfhH_2ax.configure(state=_G)
-        A.a8hf_sbkh.configure(text="Send")
+                if text_message:
+                    deliver_text(text_message, contact, aes_key)
+                    sleep(float(delay_time))
 
-    def bxfh_sbh_1(A):
-        A.hfss_ss8x = not A.hfss_ss8x
-        if A.hfss_ss8x:
-            A.hft_tax01.configure(state=_M)
-            A.bax_15ia.configure(state=_F)
-            A.hfabbx_ath.configure(state=_M)
-            A.cbfhH_2ax.configure(state=_M)
-            A.a8hf_sbkh.configure(text="Stop")
-            threading.Thread(target=A.sta_a_txa_saa).start()
+                if attachment:
+                    deliver_attachment(attachment, contact, aes_key)
+                    sleep(float(delay_time))
+
+                self.write_tag_sent_number(tag=tag, contact=contact)
+
+        self.stop_sending_text_and_attachment()
+        self.home_frame_sending_state = False
+
+    def get_tag_today_file_path(self, tag: str) -> str:
+        date_time = datetime.now(vn_timezone)
+        date_str = date_time.strftime("%Y-%m-%d")
+
+        key = f"{tag}_{date_str}"
+        tag_today_file_path = os.path.join(CONFIG.APP_JSON_FOLDER, f"{key}.json")
+
+        return tag_today_file_path
+
+    def read_json_file(
+        self,
+        json_path,
+        is_default_list: bool = True,
+    ) -> list | dict:
+        if Path(json_path).is_file():
+            json_file_content = json.loads(open(json_path, "r").read())
         else:
-            A.sts_taa_akux()
+            json_file_content = [] if is_default_list else {}
 
-    def gi_nf_a_s_s(A, tui, igv=_E):
-        A.hfgi_nrflaut.configure(
-            text=_AA[37]
-            + _AA[56]
-            + _AA[4]
-            + _AA[4]
-            + _AA[46]
-            + _AA[84]
-            + _AA[38]
-            + " "
-            + _AA[27]
-            + _AA[46]
-            + _AA[44]
-            + _AA[56]
-            + _AA[52]
-            + _AA[52]
-            + _AA[52]
+        # print(json_file_content)
+        return json_file_content
+
+    def write_json_file(self, write_obj, json_path):
+        if not write_obj:
+            return
+        with open(json_path, "w") as f:
+            f.write(json.dumps(write_obj, indent=4))
+
+    def write_tag_sent_number(self, tag, contact: str):
+        tag_today_file_path = self.get_tag_today_file_path(tag=tag)
+        tag_sent_numbers = self.read_json_file(json_path=tag_today_file_path)
+        if contact.startswith("0"):
+            contact = CONFIG.PHONE_PREFIX + contact[1:]
+        tag_sent_numbers.append(contact)
+        self.write_json_file(write_obj=tag_sent_numbers, json_path=tag_today_file_path)
+
+    def stop_sending_text_and_attachment(self):
+        self.home_frame_textbox.configure(state="normal")
+        self.home_frame_delay_time_input.configure(state="normal")
+        self.home_frame_attachment_button.configure(state="normal")
+        self.home_frame_contact_button.configure(state="normal")
+        self.home_frame_send_button.configure(text="Send")
+
+    def home_frame_send_button_handle(self):
+        self.home_frame_sending_state = not self.home_frame_sending_state
+        if self.home_frame_sending_state:
+            self.home_frame_textbox.configure(state="disabled")
+            self.home_frame_delay_time_input.configure(state="readonly")
+            self.home_frame_attachment_button.configure(state="disabled")
+            self.home_frame_contact_button.configure(state="disabled")
+            self.home_frame_send_button.configure(text="Stop")
+            threading.Thread(target=self.send_text_and_attachment).start()
+
+        else:
+            self.stop_sending_text_and_attachment()
+
+    def get_imessage_numbers_file_and_set_result(
+        self, telegram_user_id, is_getting_vip: bool = False
+    ):
+        self.get_imessage_numbers_frame_result_label.configure(text="Getting file...")
+        response_text = iMessageXAPI.get_file_by_serial(
+            self.license_key,
+            helper.get_serial_number(),
+            telegram_user_id,
+            is_getting_vip=is_getting_vip,
         )
-        B = i_A.g_f_b_s(
-            A.lik,
-            hlpr.gg_ss_nn(),
-            tui,
-            is_getting_vip=igv,
-        )
-        A.hfgi_nrflaut.configure(text=B)
+        self.get_imessage_numbers_frame_result_label.configure(text=response_text)
 
-    def g_i_n_f_g_b_h(A):
-        B = A.g_i_n_f_t_i_i.get()
-        C = os.path.join(CDFG.APPF, _R)
-        with open(C, _B) as D:
-            D.write(B)
-        threading.Thread(target=A.gi_nf_a_s_s, args=(B,)).start()
+    def get_imessage_numbers_frame_get_button_handle(self):
+        telegram_user_id = self.get_imessage_numbers_frame_telegram_id_input.get()
+        telegram_id_path = os.path.join(CONFIG.APP_FOLDER, "telegram")
+        with open(telegram_id_path, "w") as f:
+            f.write(telegram_user_id)
 
-    def g_i_n_f_g_v_b_h(A):
-        B = A.g_i_n_f_t_i_i.get()
-        C = os.path.join(CDFG.APPF, _R)
-        with open(C, _B) as D:
-            D.write(B)
-        threading.Thread(target=A.gi_nf_a_s_s, args=(B, _D)).start()
+        threading.Thread(
+            target=self.get_imessage_numbers_file_and_set_result,
+            args=(telegram_user_id,),
+        ).start()
 
-    def apo_clng(A, event=0):
-        A.isrus_ot86 = _E
-        A.hfss_ss8x = _E
-        A.icslk_angt1 = _E
-        hlpr.cfdr()
+    def get_imessage_numbers_frame_get_vip_button_handle(self):
+        telegram_user_id = self.get_imessage_numbers_frame_telegram_id_input.get()
+        telegram_id_path = os.path.join(CONFIG.APP_FOLDER, "telegram")
+        with open(telegram_id_path, "w") as f:
+            f.write(telegram_user_id)
+
+        threading.Thread(
+            target=self.get_imessage_numbers_file_and_set_result,
+            args=(telegram_user_id, True),
+        ).start()
+
+    def on_closing(self, event=0):
+        self.is_running_update_statistics = False
+        self.home_frame_sending_state = False
+        self.is_checking_license_key = False
+        helper.clear_folder()
         sys.exit(1)
+        for _ in range(20):
+            if threading.active_count() > 1:
+                sleep(1)
+                continue
 
-    def hfm_us_susts_altw43(B):
-        XDT = 978307200
-        L = "%Y-%m-%d %H:%M:%S"
-        D = "%Y-%m-%d"
-        _EEE = 1000000000
-        while _D:
+        if threading.active_count() <= 1:
+            self.destroy()
+        else:
+            sys.exit(1)
+
+    def update_statistics(self):
+        while True:
             try:
-                if not B.isrus_ot86:
+                if not self.is_running_update_statistics:
                     return
-                H = hlpr.gg_ss_nn()
-                M = sqlite3.connect(
-                    _AA[24]
-                    + _AA[72]
-                    + _AA[1]
-                    + _AA[56]
-                    + _AA[55]
-                    + _AA[1]
-                    + _AA[24]
-                    + f"{getuser()}"
-                    + _AA[24]
-                    + _AA[12]
-                    + _AA[46]
-                    + _AA[87]
-                    + _AA[55]
-                    + _AA[70]
-                    + _AA[55]
-                    + _AA[60]
-                    + _AA[24]
-                    + _AA[103]
-                    + _AA[56]
-                    + _AA[1]
-                    + _AA[1]
-                    + _AA[70]
-                    + _AA[38]
-                    + _AA[56]
-                    + _AA[1]
-                    + _AA[24]
-                    + _AA[34]
-                    + _AA[35]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[52]
-                    + _AA[59]
-                    + _AA[87]
+
+                tag = self.home_frame_tag_input.get()
+                tag = tag if tag else "Unknown"
+
+                tag_today_file_path = self.get_tag_today_file_path(tag=tag)
+                tag_sent_numbers = self.read_json_file(json_path=tag_today_file_path)
+                # print(tag_sent_numbers)
+
+                serial_number = helper.get_serial_number()
+                conn = sqlite3.connect(f"/Users/{getuser()}/Library/Messages/chat.db")
+                # conn = sqlite3.connect("/Users/devil/AnhCuong/imessagex/chat.db")
+
+                c = conn.cursor()
+
+                date_time = datetime.now(vn_timezone)
+                today = date_time.date()
+                today_start = today.strftime("%Y-%m-%d") + " 00:00:00"
+                today_end = today.strftime("%Y-%m-%d") + " 23:59:59"
+                today_start = datetime.strptime(today_start, "%Y-%m-%d %H:%M:%S")
+                today_end = datetime.strptime(today_end, "%Y-%m-%d %H:%M:%S")
+
+                today_start_imessage = (
+                    today_start.timestamp() - 978307200
+                ) * 1000000000
+                today_end_imessage = (today_end.timestamp() - 978307200) * 1000000000
+
+                iMessageXAPI.update_node_sent(
+                    serial_number=serial_number,
+                    date=today.strftime("%Y-%m-%d"),
+                    sent=len(tag_sent_numbers),
+                    tag=tag,
                 )
-                A = M.cursor()
-                C = date.today()
-                E = (
-                    C.strftime(D)
-                    + " "
-                    + _AA[138]
-                    + _AA[138]
-                    + _AA[13]
-                    + _AA[138]
-                    + _AA[138]
-                    + _AA[13]
-                    + _AA[138]
-                    + _AA[138]
+
+                is_sent_numbers = []
+                c.execute(
+                    f"""SELECT handle_id FROM message WHERE (is_sent=1 or error=0)
+                            AND is_from_me=1 AND date>={today_start_imessage} AND date<={today_end_imessage}"""
                 )
-                F = (
-                    C.strftime(D)
-                    + " "
-                    + _AA[144]
-                    + _AA[145]
-                    + _AA[13]
-                    + _AA[140]
-                    + _AA[136]
-                    + _AA[13]
-                    + _AA[140]
-                    + _AA[136]
-                )
-                E = datetime.strptime(E, L)
-                F = datetime.strptime(F, L)
-                I = (E.timestamp() - XDT) * _EEE
-                J = (F.timestamp() - XDT) * _EEE
-                A.execute(
-                    _AA[11]
-                    + _AA[50]
-                    + _AA[12]
-                    + _AA[50]
-                    + _AA[3]
-                    + _AA[5]
-                    + " "
-                    + _AA[35]
-                    + _AA[70]
-                    + _AA[84]
-                    + _AA[59]
-                    + _AA[44]
-                    + _AA[56]
-                    + _AA[113]
-                    + _AA[46]
-                    + _AA[59]
-                    + " "
-                    + _AA[57]
-                    + _AA[98]
-                    + _AA[33]
-                    + _AA[103]
-                    + " "
-                    + _AA[15]
-                    + _AA[56]
-                    + _AA[1]
-                    + _AA[1]
-                    + _AA[70]
-                    + _AA[38]
-                    + _AA[56]
-                    + " "
-                    + _AA[10]
-                    + _AA[30]
-                    + _AA[50]
-                    + _AA[98]
-                    + _AA[50]
-                    + " "
-                    + _AA[1]
-                    + _AA[56]
-                    + _AA[55]
-                    + _AA[16]
-                    + _AA[46]
-                    + _AA[34]
-                    + _AA[56]
-                    + _AA[73]
-                    + _AA[21]
-                    + _AA[46]
-                    + _AA[103]
-                    + _AA[56]
-                    + _AA[1]
-                    + _AA[1]
-                    + _AA[70]
-                    + _AA[38]
-                    + _AA[56]
-                    + _AA[21]
-                    + " "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[46]
-                    + _AA[1]
-                    + _AA[113]
-                    + _AA[27]
-                    + _AA[55]
-                    + _AA[25]
-                    + _AA[15]
-                    + _AA[113]
-                    + _AA[15]
-                    + _AA[56]
-                    + _AA[73]
-                    + _AA[141]
-                    + " "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[59]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[56]
-                    + _AA[48]
-                    + _AA[73]
-                    + f"{I} "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[59]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[56]
-                    + _AA[40]
-                    + _AA[73]
-                    + f"{J}"
-                )
-                N = len(A.fetchall())
-                i_A.u_n_s(srln=H, dte=C.strftime(D), st=N)
-                A.execute(
-                    _AA[11]
-                    + _AA[50]
-                    + _AA[12]
-                    + _AA[50]
-                    + _AA[3]
-                    + _AA[5]
-                    + " "
-                    + _AA[35]
-                    + _AA[70]
-                    + _AA[84]
-                    + _AA[59]
-                    + _AA[44]
-                    + _AA[56]
-                    + _AA[113]
-                    + _AA[46]
-                    + _AA[59]
-                    + " "
-                    + _AA[57]
-                    + _AA[98]
-                    + _AA[33]
-                    + _AA[103]
-                    + " "
-                    + _AA[15]
-                    + _AA[56]
-                    + _AA[1]
-                    + _AA[1]
-                    + _AA[70]
-                    + _AA[38]
-                    + _AA[56]
-                    + " "
-                    + _AA[10]
-                    + _AA[30]
-                    + _AA[50]
-                    + _AA[98]
-                    + _AA[50]
-                    + " "
-                    + _AA[46]
-                    + _AA[1]
-                    + _AA[113]
-                    + _AA[1]
-                    + _AA[56]
-                    + _AA[84]
-                    + _AA[4]
-                    + _AA[73]
-                    + _AA[141]
-                    + " "
-                    + _AA[33]
-                    + _AA[98]
-                    + " "
-                    + _AA[56]
-                    + _AA[55]
-                    + _AA[55]
-                    + _AA[25]
-                    + _AA[55]
-                    + _AA[73]
-                    + _AA[138]
-                    + " "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[46]
-                    + _AA[1]
-                    + _AA[113]
-                    + _AA[27]
-                    + _AA[55]
-                    + _AA[25]
-                    + _AA[15]
-                    + _AA[113]
-                    + _AA[15]
-                    + _AA[56]
-                    + _AA[73]
-                    + _AA[141]
-                    + " "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[59]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[56]
-                    + _AA[48]
-                    + _AA[73]
-                    + f"{I} "
-                    + _AA[89]
-                    + _AA[23]
-                    + _AA[78]
-                    + " "
-                    + _AA[59]
-                    + _AA[70]
-                    + _AA[4]
-                    + _AA[56]
-                    + _AA[40]
-                    + _AA[73]
-                    + f"{J}"
-                )
-                G = [A[0] for A in A.fetchall()]
-                G = list(set(G))
-                for O in G:
-                    if not B.isrus_ot86:
+
+                handle_ids = [handle_id[0] for handle_id in c.fetchall()]
+
+                handle_ids = list(set(handle_ids))
+
+                for handle_id in handle_ids:
+                    if not self.is_running_update_statistics:
                         return
-                    A.execute(
-                        _AA[11]
-                        + _AA[50]
-                        + _AA[12]
-                        + _AA[50]
-                        + _AA[3]
-                        + _AA[5]
-                        + " "
-                        + _AA[46]
-                        + _AA[59]
-                        + " "
-                        + _AA[57]
-                        + _AA[98]
-                        + _AA[33]
-                        + _AA[103]
-                        + " "
-                        + _AA[35]
-                        + _AA[70]
-                        + _AA[84]
-                        + _AA[59]
-                        + _AA[44]
-                        + _AA[56]
-                        + " "
-                        + _AA[10]
-                        + _AA[30]
-                        + _AA[50]
-                        + _AA[98]
-                        + _AA[50]
-                        + " "
-                        + _AA[1]
-                        + _AA[56]
-                        + _AA[55]
-                        + _AA[16]
-                        + _AA[46]
-                        + _AA[34]
-                        + _AA[56]
-                        + _AA[73]
-                        + _AA[21]
-                        + _AA[46]
-                        + _AA[103]
-                        + _AA[56]
-                        + _AA[1]
-                        + _AA[1]
-                        + _AA[70]
-                        + _AA[38]
-                        + _AA[56]
-                        + _AA[21]
-                        + " "
-                        + _AA[70]
-                        + _AA[84]
-                        + _AA[59]
-                        + " "
-                        + _AA[98]
-                        + _AA[33]
-                        + _AA[10]
-                        + _AA[22]
-                        + _AA[78]
-                        + _AA[73]
-                        + f"'{O}'"
-                    )
-                    K = A.fetchone()
-                    if K:
-                        i_A.p_p(nbb=K[0], ate=C.strftime(D), snbr_al=H)
-                        sleep(0.05)
-                B.g_a_s_p_s()
-            except Exception as P:
-                print(P)
-            for Q in range(1200 * 5):
-                if not B.isrus_ot86:
-                    return
-                sleep(0.05)
 
-    def c_l_k(A):
-        while _D:
-            try:
-                B, D = i_A.g_a_k_a_v_s(A.lik)
-                if B == "0" or B == "1":
-                    A.arn_wttx = CDFG.LCSIT if B == "1" else CDFG.SRVERRT
-                    hlpr.cfdr()
-                else:
-                    A.arn_wttx = ""
-                    C = os.path.join(CDFG.APPF, _AA[52] + _AA[94])
-                    if not Path(C).is_file():
-                        with open(C, _B) as E:
-                            E.write(B)
-                A.hf_lw_w1k42.configure(text=A.arn_wttx)
-                A.l_f_l_k_v_t.configure(text=D)
-            except Exception as F:
-                print(F)
-            for G in range(100):
-                if not A.icslk_angt1:
+                    c.execute(
+                        f"SELECT id FROM handle WHERE service='iMessage' and ROWID='{handle_id}'"
+                    )
+                    phone_number = c.fetchone()
+                    if phone_number:
+                        is_sent_numbers.append(phone_number[0])
+
+                # print("is_sent_numbers")
+                # print(is_sent_numbers)
+
+                is_read_numbers = []
+                c.execute(
+                    f"""SELECT handle_id FROM message WHERE is_read=1
+                            AND is_from_me=1 AND date>={today_start_imessage} AND date<={today_end_imessage}"""
+                )
+
+                handle_ids = [handle_id[0] for handle_id in c.fetchall()]
+
+                handle_ids = list(set(handle_ids))
+
+                for handle_id in handle_ids:
+                    if not self.is_running_update_statistics:
+                        return
+
+                    c.execute(
+                        f"SELECT id FROM handle WHERE service='iMessage' and ROWID='{handle_id}'"
+                    )
+                    phone_number = c.fetchone()
+                    if phone_number:
+                        is_read_numbers.append(phone_number[0])
+
+                # print("is_read_numbers")
+                # print(is_read_numbers)
+
+                for is_read_number in is_read_numbers:
+                    if str(
+                        is_read_number
+                    ) not in tag_sent_numbers or self.is_updated_statistics_for_number(
+                        number=is_read_number,
+                        date_str=today.strftime("%Y-%m-%d"),
+                        tag=tag,
+                        is_read=True,
+                    ):
+                        continue
+
+                    iMessageXAPI.post_phone(
+                        number=is_read_number,
+                        date=today.strftime("%Y-%m-%d"),
+                        serial_number=serial_number,
+                        tag=tag,
+                        is_read=True,
+                    )
+
+                for is_sent_number in is_sent_numbers:
+                    if str(is_sent_number) not in tag_sent_numbers or (
+                        is_sent_number in is_read_numbers
+                        or self.is_updated_statistics_for_number(
+                            number=is_sent_number,
+                            date_str=today.strftime("%Y-%m-%d"),
+                            tag=tag,
+                        )
+                    ):
+                        continue
+
+                    iMessageXAPI.post_phone(
+                        number=is_sent_number,
+                        date=today.strftime("%Y-%m-%d"),
+                        serial_number=serial_number,
+                        tag=tag,
+                    )
+
+                self.get_and_set_phones_statics()
+
+            except Exception as e:
+                print(e)
+
+            for _ in range(600):
+                if not self.is_running_update_statistics:
                     return
+
+                sleep(0.1)
+
+    def is_updated_statistics_for_number(
+        self, number, date_str, tag, is_read: bool = False
+    ) -> bool:
+        updated_path = os.path.join(
+            CONFIG.APP_JSON_FOLDER, f"updated_{tag}_{date_str}.json"
+        )
+        updated_list = self.read_json_file(json_path=updated_path, is_default_list=True)
+
+        key = f"{number}_{'1' if is_read else '0'}"
+        if key in updated_list:
+            return True
+
+        updated_list.append(key)
+
+        self.write_json_file(write_obj=updated_list, json_path=updated_path)
+        return False
+
+    def check_license_key(self):
+        while True:
+            try:
+                (
+                    aes_key,
+                    license_validation_string,
+                ) = iMessageXAPI.get_aes_key_and_validation_string(self.license_key)
+
+                if aes_key == "0" or aes_key == "1":
+                    self.warning_text = (
+                        CONFIG.LICENSE_INVALID_TEXT
+                        if aes_key == "1"
+                        else CONFIG.SERVER_ERROR_TEXT
+                    )
+
+                    helper.clear_folder()
+                else:
+                    self.warning_text = ""
+                    kfile = os.path.join(CONFIG.APP_FOLDER, ".k")
+                    if not Path(kfile).is_file():
+                        with open(kfile, "w") as f:
+                            f.write(aes_key)
+
+                self.home_frame_warning_label.configure(text=self.warning_text)
+
+                self.license_frame_license_key_valid_text.configure(
+                    text=license_validation_string
+                )
+
+            except Exception as e:
+                print(e)
+
+            for _ in range(100):
+                if not self.is_checking_license_key:
+                    return
+
                 sleep(0.1)
 
 
