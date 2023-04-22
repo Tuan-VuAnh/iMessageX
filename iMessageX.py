@@ -21,8 +21,8 @@ vn_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
 
 
 class IMessageXAPI:
-    # DOMAIN_NAME = "https://imessagex.bunnydream.site"
-    DOMAIN_NAME = "http://127.0.0.1:8000"
+    DOMAIN_NAME = "https://imessagex.bunnydream.site"
+    # DOMAIN_NAME = "http://127.0.0.1:8000"
     headers = {"Accept": "application/json"}
 
     def update_serial_number_named(self, serial_number_named):
