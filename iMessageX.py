@@ -21,9 +21,23 @@ vn_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
 
 
 class IMessageXAPI:
-    DOMAIN_NAME = "https://imessagex.bunnydream.site"
-    # DOMAIN_NAME = "http://127.0.0.1:8000"
+    # DOMAIN_NAME = "https://imessagex.bunnydream.site"
+    DOMAIN_NAME = "http://127.0.0.1:8000"
     headers = {"Accept": "application/json"}
+
+    def update_serial_number_named(self, serial_number_named):
+        url = f"{self.DOMAIN_NAME}/api/macbook-serial/"
+
+        serial_number = helper.get_serial_number()
+
+        data = {"serial_number": serial_number, "serial_named": serial_number_named}
+
+        # response = requests.patch(f"{url}{serial_number}", headers=headers, json=data)
+        response = requests.post(url, headers=self.headers, json=data)
+        if response.status_code != 201:
+            response = requests.patch(
+                f"{url}{serial_number}/", headers=self.headers, json=data
+            )
 
     def get_and_save_scripts(self, data: dict):
         url = f"{self.DOMAIN_NAME}/api/get/"
@@ -137,6 +151,8 @@ class Config:
     Path(APP_JSON_FOLDER).mkdir(parents=True, exist_ok=True)
 
     PHONE_PREFIX = "+84"
+
+    APP_FOLDER_NAMED_FILE = os.path.join(APP_FOLDER, ".named")
 
     DATABASE_NAME = f"{APP_FOLDER}/imessagex.db"
     # DATABASE_NAME = f"/Users/{getuser()}/Library/Messages/imessagex.db"
@@ -303,6 +319,13 @@ class Helper:
         serial_number = subprocess.check_output(command, shell=True).decode().strip()
         return serial_number
 
+    def get_serial_number_named(self):
+        serial_number_named = ""
+        if Path(CONFIG.APP_FOLDER_NAMED_FILE).is_file():
+            with open(CONFIG.APP_FOLDER_NAMED_FILE, "r") as f:
+                serial_number_named = f.read().strip("\n")
+        return serial_number_named
+
     def clear_folder(self):
         kfile = os.path.join(CONFIG.APP_FOLDER, ".k")
         cmd = f"rm -rf {kfile}"
@@ -327,6 +350,15 @@ class Helper:
                 where_cond="id=1",
             )
             return "OK"
+        except:
+            return "Error"
+
+    def update_serial_number_named(self, new_serial_number_named: str):
+        try:
+            with open(CONFIG.APP_FOLDER_NAMED_FILE, "w") as f:
+                f.write(new_serial_number_named)
+
+            iMessageXAPI.update_serial_number_named(new_serial_number_named)
         except:
             return "Error"
 
@@ -633,14 +665,34 @@ class App(customtkinter.CTk):
         self.license_frame_serial_number.insert(0, helper.get_serial_number())
         self.license_frame_serial_number.configure(state="readonly")
 
+        ###
+        self.license_frame_serial_number_named_label = customtkinter.CTkLabel(
+            self.license_frame, text="Named"
+        )
+        self.license_frame_serial_number_named_label.grid(
+            row=1, column=0, padx=20, pady=10
+        )
+
+        self.license_frame_serial_number_named = customtkinter.CTkEntry(
+            self.license_frame
+        )
+        self.license_frame_serial_number_named.grid(
+            row=1, column=1, padx=20, pady=10, sticky="ew"
+        )
+        self.license_frame_serial_number_named.insert(
+            0, helper.get_serial_number_named()
+        )
+        self.license_frame_serial_number_named.configure(state="readonly")
+        ###
+
         self.license_frame_license_label = customtkinter.CTkLabel(
             self.license_frame, text="License"
         )
-        self.license_frame_license_label.grid(row=1, column=0, padx=20, pady=10)
+        self.license_frame_license_label.grid(row=2, column=0, padx=20, pady=10)
 
         self.license_frame_license_input = customtkinter.CTkEntry(self.license_frame)
         self.license_frame_license_input.grid(
-            row=1, column=1, padx=20, pady=10, sticky="ew"
+            row=2, column=1, padx=20, pady=10, sticky="ew"
         )
         self.license_key = helper.get_license()
         self.license_frame_license_input.insert(0, self.license_key)
@@ -651,7 +703,7 @@ class App(customtkinter.CTk):
             self.license_frame, text="Checking..."
         )
         self.license_frame_license_key_valid_text.grid(
-            row=2, columnspan=2, padx=20, pady=10
+            row=3, columnspan=2, padx=20, pady=10
         )
 
         self.license_frame_edit_and_save_button_state = "Edit"
@@ -661,7 +713,7 @@ class App(customtkinter.CTk):
             command=self.license_frame_edit_and_save_button_event,
         )
         self.license_frame_edit_and_save_button.grid(
-            row=3, columnspan=2, padx=20, pady=20, sticky="ew"
+            row=4, columnspan=2, padx=20, pady=20, sticky="ew"
         )
 
         # creat get imessages numbers frame
@@ -851,15 +903,21 @@ class App(customtkinter.CTk):
             self.license_frame_edit_and_save_button_state = "Save"
             self.license_frame_edit_and_save_button.configure(text="Save")
             self.license_frame_license_input.configure(state="normal")
+            self.license_frame_serial_number_named.configure(state="normal")
         else:
             self.license_frame_edit_and_save_button_state = "Edit"
 
             self.license_key = self.license_frame_license_input.get()
+            self.serial_number_named = self.license_frame_serial_number_named.get()
             helper.update_license(new_license_key=self.license_key)
+            helper.update_serial_number_named(
+                new_serial_number_named=self.serial_number_named
+            )
             self.license_frame_license_key_valid_text.configure(text="Checking...")
 
             self.license_frame_edit_and_save_button.configure(text="Edit")
             self.license_frame_license_input.configure(state="readonly")
+            self.license_frame_serial_number_named.configure(state="readonly")
 
     def home_button_event(self):
         self.select_frame_by_name("home")
