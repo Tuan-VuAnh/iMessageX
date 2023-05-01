@@ -1,23 +1,24 @@
-import customtkinter
-import pytz
+import base64
 import json
 import os
-import base64
-import requests
-import subprocess
-import threading
-import sys
-import sqlite3
 import platform
-
-from datetime import datetime, date, timedelta
-from time import sleep
+import sqlite3
+import subprocess
+import sys
+import threading
+from datetime import date, datetime, timedelta
 from getpass import getuser
 from pathlib import Path
+from time import sleep
 
+import customtkinter
+import pytz
+import requests
 from Crypto.Cipher import AES
 
 vn_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
+
+APP_VERSION = "1.0.0"
 
 
 class IMessageXAPI:
@@ -376,7 +377,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("iMessageX")
+        self.title(f"iMessageX v{APP_VERSION}")
         self.minsize(width=960, height=526)
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
