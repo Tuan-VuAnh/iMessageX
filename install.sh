@@ -49,6 +49,6 @@ pyinstaller --name 'iMessageX' \
 mv dist/iMessageX.app /Applications
 
 cd /tmp
-rm -rf .imessagex
+# rm -rf .imessagex
 
 echo "Finished!"
