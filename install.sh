@@ -9,6 +9,7 @@ fi
 
 brew install python
 brew install python-tk
+brew install git
 
 macos_version=$(sw_vers -productVersion)
 
